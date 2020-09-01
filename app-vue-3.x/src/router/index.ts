@@ -24,7 +24,6 @@ const routes = [
     path:'/bilibili',
     name:'bilibili',
     component:()=> import('@/views/bilibili/index'),
-    meta:{title:'bilibili'}
   }
 ]
 

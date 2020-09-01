@@ -4,7 +4,7 @@ import banner from './banner/index'
 import content from './content/index'
 import bottom from './foot/index'
 
-import './index.scss'
+import './index.css'
 
 export default defineComponent({
     name: 'index',
@@ -16,7 +16,7 @@ export default defineComponent({
     components: {
         top, banner, content, bottom
     },
-    setup(props, context) {
+    setup(_props, _context) {
         return {
         }
 
