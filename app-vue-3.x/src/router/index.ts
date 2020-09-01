@@ -19,6 +19,12 @@ const routes = [
     path:'/type',
     name:'Type',
     component:()=> import('../views/Type')
+  },
+  {
+    path:'/bilibili',
+    name:'bilibili',
+    component:()=> import('@/views/bilibili/index'),
+    meta:{title:'bilibili'}
   }
 ]
 
