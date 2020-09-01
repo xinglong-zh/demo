@@ -1,5 +1,9 @@
 import { defineComponent } from 'vue';
 
+import Carousel from './carousel'
+import Recommend from './recommend'
+
+
 export default defineComponent({
     name: 'banner',
     data() {
@@ -7,12 +11,12 @@ export default defineComponent({
 
         }
     },
-    setup() {
-        return {
-
-        }
-    },
     render() {
-        return <div class="b_banner">i am banner </div>
+        return (
+            <div class="center content_video">
+                <Carousel></Carousel>
+                <Recommend></Recommend>
+            </div>
+        )
     }
 })

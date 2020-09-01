@@ -1,23 +1,38 @@
-.b_top {
-    height: 100px;
+.top {
+    height: 180px;
     width: 100%;
-    border: 1px solid red;
+    background: #3B8D71;
+    display: flex;
+    justify-content: space-between;
+    /* border: 1px solid red; */
 }
 
-.b_banner {
+.banner {
     height: 200px;
-    border: 1px solid red;
+    /* border: 1px solid red; */
 }
 
-.b_content {
-    border: 1px solid red;
+.center {
+    display: flex;
+    justify-items: center;
+    align-items: center;
 }
 
-.b_foot {
-    border: 1px solid red;
+.content_video {
+    /* border: 1px solid red; */
+    width: 100%;
+}
+
+.content_picture {
+    width: 100%；
+}
+
+.foot {
+    /* border: 1px solid red; */
 }
 
 html body {
     margin: 0px;
+    box-sizing: border-box;
 
 }
