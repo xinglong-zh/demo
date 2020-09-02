@@ -1,0 +1,14 @@
+.carousel {
+    height: 200px;
+    border: 1px silver solid;
+
+    .left {
+        flex: 1 1 30%;
+        background: #D1DBF4;
+        // border: 1px solid red;
+    }
+
+    .right {
+        flex: 1 1 70%;
+    }
+}

@@ -5,7 +5,7 @@ import Content from './content/index'
 import Bottom from './foot/index'
 import ADs from './ads/advertise'
 
-import './index.css'
+import './index.scss'
 
 export default defineComponent({
     name: 'index',

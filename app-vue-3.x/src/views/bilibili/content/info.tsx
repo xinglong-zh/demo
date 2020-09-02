@@ -1,8 +1,8 @@
 import { defineComponent } from 'vue';
 
 export default defineComponent({
-    name: 'foot',
+    name: 'info',
     render() {
-        return (<footer class="foot">foot </footer>)
+        return (<div>info</div>)
     }
 })

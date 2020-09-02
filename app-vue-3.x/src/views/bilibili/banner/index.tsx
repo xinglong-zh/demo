@@ -3,6 +3,8 @@ import { defineComponent } from 'vue';
 import Carousel from './carousel'
 import Recommend from './recommend'
 
+import './banner.scss'
+
 
 export default defineComponent({
     name: 'banner',
@@ -13,9 +15,9 @@ export default defineComponent({
     },
     render() {
         return (
-            <div class="center content_video">
-                <Carousel></Carousel>
-                <Recommend></Recommend>
+            <div class="center content_video carousel">
+                <Carousel class="left"></Carousel>
+                <Recommend class="right"></Recommend>
             </div>
         )
     }

@@ -6,7 +6,7 @@ export default defineComponent({
     name: 'ADs',
     render() {
         return (
-            <div>推广</div>
+            <div class="content_picture">推广</div>
         )
     }
 })
