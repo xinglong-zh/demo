@@ -24,6 +24,11 @@ const routes = [
     path:'/bilibili',
     name:'bilibili',
     component:()=> import('@/views/bilibili/index'),
+  },
+  {
+    path:'/icon',
+    name:'icon',
+    component:() => import('@/icon/index')
   }
 ]
 

@@ -1,12 +1,13 @@
-import { defineComponent } from 'vue';
+import { defineComponent, ref } from 'vue';
 
 export default defineComponent({
     name: 'search',
     render() {
+        let serach = ref(null)
         return (
-            <div>
+            <div ref={serach}>
                 <input type="text"></input>
-                <botton>按钮</botton>
+                <button>按钮</button>
             </div>
         )
     }

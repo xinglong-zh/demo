@@ -1,4 +1,4 @@
-import { defineComponent, PropType, toRefs } from 'vue';
+import { defineComponent, PropType, toRefs, ref } from 'vue';
 
 interface Icon {
     text: string,
@@ -8,18 +8,24 @@ interface Icon {
 }
 
 export default defineComponent({
-    name: 'nav',
+    name: 'navButton',
     props: {
         navButton: {
             type: Object as PropType<Icon>
         }
     },
     setup(props) {
+        const navB = ref(null)
         let { navButton } = toRefs(props)
         return () => (
-            <>
-                {navButton?.value?.text}
-            </>
+            <li>
+                <span class="button">
+                    {navButton?.value?.text}
+                    <div class="content">
+                        悬浮之后的内容
+                    </div>
+                </span>
+            </li >
         )
     }
 })

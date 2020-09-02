@@ -1,7 +1,9 @@
-import { defineComponent } from 'vue';
+import { defineComponent, ref } from 'vue';
 import Login from './login'
 import NavBotton from './navBotton'
 import Search from './search'
+import Logo from './logo'
+import './top.scss'
 
 export default defineComponent({
     name: 'top',
@@ -15,13 +17,17 @@ export default defineComponent({
         }
     },
     render() {
+        const top = ref(null)
         return (
-            <div class="top">
-                <div>
-                    {this.navButtons.map((nav) => { return <NavBotton navButton={nav}></NavBotton> })}
+            <div class="top" ref={top}>
+                <div class="nav-content">
+                    <ul>
+                        {this.navButtons.map((nav) => { return <NavBotton navButton={nav}></NavBotton> })}
+                    </ul>
                 </div>
                 <Search></Search>
                 <Login></Login>
+                <Logo class="logo"></Logo>
             </div>
         )
     }
