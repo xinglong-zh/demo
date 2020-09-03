@@ -185,3 +185,54 @@ class Dog extends Animal {
 const dog: Dog = new Dog();
 dog.move(10)
 dog.bark()
+
+
+function buildName(firstName: string, lastName: string = 'will', ...restName: string[]) {
+    return firstName + '-' + lastName + '-' + restName.join('-')
+}
+
+console.log(buildName('firstname', undefined, 'biu biu ', 'ming'))
+
+// 使用泛型
+
+function identity<T>(args: T): T {
+    return <T>args
+}
+
+let output = identity<string>('mystring')  // 指定传入的类型
+let output_1 = identity('mystring')   // 自动推导类型
+
+function loggingIdentify<T>(args: T[]): T[] {
+    console.log(args.length)
+    return args
+}
+
+function loggingIdentify_1<T>(args: Array<T>): Array<T> {
+    return args
+}
+
+let myIdentity: { <T>(args: T): T } = identity   // 带有调用签名的对象字面量
+
+// 泛型接口
+interface GenericIdentityFn<T> {
+    (arg: T): T
+}
+function identity_1<T>(arg: T): T {
+    return arg
+}
+
+let myIdentity_1: GenericIdentityFn<number> = identity_1   //  泛型接口，可以传递参数
+
+// 类型兼容性
+// ts 是 结构类型系统
+// java 是名义类型系统
+
+interface Named {
+    name: string
+}
+class Person {
+    name: string
+}
+let p: Named;
+p = new Person()  // 结构类型系统认为，Named 和 person 具有想用的属性  因此赋值  .java 名义类型会报错
+

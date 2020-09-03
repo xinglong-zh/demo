@@ -142,3 +142,22 @@ var Dog = /** @class */ (function (_super) {
 var dog = new Dog();
 dog.move(10);
 dog.bark();
+function buildName(firstName, lastName) {
+    if (lastName === void 0) { lastName = 'will'; }
+    var restName = [];
+    for (var _i = 2; _i < arguments.length; _i++) {
+        restName[_i - 2] = arguments[_i];
+    }
+    return firstName + '-' + lastName + '-' + restName.join('-');
+}
+console.log(buildName('firstname', undefined, 'biu biu ', 'ming'));
+// 使用泛型
+function identity(args) {
+    return args;
+}
+var output = identity('mystring'); // 指定传入的类型
+var output_1 = identity('mystring'); // 自动推导类型
+function loggingIdentify(args) {
+    console.log(args.length);
+    return args;
+}
