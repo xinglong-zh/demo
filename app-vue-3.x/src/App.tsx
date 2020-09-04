@@ -5,9 +5,7 @@ export default defineComponent({
   name: 'App',
   render() {
     return (
-      <div id="app">
-        <RouterView></RouterView>
-      </div>
+      <RouterView></RouterView>
     )
   }
 })

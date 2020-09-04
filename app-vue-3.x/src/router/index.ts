@@ -1,12 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import  Home from '@/components/HelloWorld.vue'
+
 
 const routes = [
-  {
-    path: '/',
-    name: 'Home',
-    component: Home
-  },
   // {
   //   path: '/about',
   //   name: 'About',
@@ -25,11 +20,11 @@ const routes = [
     name:'bilibili',
     component:()=> import('@/views/bilibili/index'),
   },
-  // {
-  //   path:'/icon',
-  //   name:'icon',
-  //   component:() => import('@/icon/index')
-  // }
+  {
+    path:'/map',
+    name:'map',
+    component:() => import('@/views/map/index.vue')
+  }
 ]
 
 const router = createRouter({
