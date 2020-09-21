@@ -24,6 +24,21 @@ const routes = [
     path:'/map',
     name:'map',
     component:() => import('@/views/map/index.vue')
+  },
+  {
+    path:'/demo',
+    name:'demo',
+    component:()=>import('@/views/demo/index')
+  },
+  {
+    path:'/chart',
+    name:'chart',
+    component:()=>import('@/views/demo/chart.vue')
+  },
+  {
+    path:'/pop',
+    name:'pop',
+    component:()=>import('@/views/demo/popup.vue')
   }
 ]
 
