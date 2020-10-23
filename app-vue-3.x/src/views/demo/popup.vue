@@ -3,6 +3,7 @@
     <div ref="demo" >
       <span style="font-family: cloud">3</span>
       <span style="font-family:wind">6</span>
+
     </div>
   </div>
 </template>
@@ -77,40 +78,43 @@ export default {
                             break
         }
       }
-      // console.log(tem)
-      
       let canvas = document.createElement("canvas");
       let ctx = canvas.getContext('2d');
-      canvas.width=400
-      canvas.height=400
-      ctx.scale(2,2)
-      // canvas.width=200
-      // canvas.height=200
+      canvas.width=100
+      canvas.height=100
+      ctx.strokeRect(0,0,80,80)
 
-      ctx.lineWidth=4
-      ctx.strokeRect(10,10,100,100)
-      // ctx.font = '12px serif'
+      ctx.font = '12px serif'
       //  九个位置 , 使用循环开始绘制 ,  横向三个 ,然后加一  置零
-      // let counter = 1;  // 使用一个计数器
-      // for(let i=0;i<3;i++){
-      //   for(let j=0;j<3;j++){
-      //     let x= i*30 +15 
-      //     let y= j*30 +10
-      //     // console.log(tem.get(counter++))
-      //     ctx.fillText(tem.get(counter++),y,x)
-      //   } 
-      // }
-
+      let counter = 1;  // 使用一个计数器
+      for(let i=0;i<3;i++){
+        for(let j=0;j<3;j++){
+          let x= i*20+20
+          let y= j*20+12
+          // console.log(tem.get(counter++))
+          ctx.fillText(tem.get(counter++),y,x)
+        } 
+      }
       // 开始绘制中心点
-      ctx.font = '24px wind';
-      ctx.fillText('2',45,45)
-      let demo = this.$refs["demo"];
-      demo.appendChild(canvas);
+      ctx.font = '16px cloud'
+      ctx.fillText(0,32,42)
+      ctx.fillText('.',38,38)
+      ctx.save()
+      ctx.translate(38,38)
+      ctx.rotate(0*Math.PI/180)
+      ctx.font ='24px wind';
+      ctx.fillText(3,0,-10)
+      return canvas
     },
   },
-  mounted() {
-    this.getCanvas(this.item,false,6);
+  created(){
+    let canvas = this.getCanvas(this.item,false,6)
+    document.body.appendChild(canvas)
   },
+  // mounted() {
+  //   let canvas =  this.getCanvas(this.item,false,6);
+  //   document.body.appendChild(canvas)
+  // },
 };
 </script>
 <style lang="scss" >
@@ -119,10 +123,10 @@ export default {
   font-size: 16px;
 }
 canvas{
-  border: 4px solid black;
+  border: 1px solid black;
   // font-family: 'wind';
-  width: 200px;
-  height: 200px;
+  width: 100px;
+  height: 100px;
 }
 
 </style>
