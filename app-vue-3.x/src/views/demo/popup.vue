@@ -3,7 +3,9 @@
     <div ref="demo" >
       <span style="font-family: cloud">3</span>
       <span style="font-family:wind">6</span>
-
+      <br>
+      <h3>双线性差值demo</h3>
+      <canvas width="400" height="400" ref="bilinear"></canvas>
     </div>
   </div>
 </template>
@@ -106,15 +108,29 @@ export default {
       ctx.fillText(3,0,-10)
       return canvas
     },
+    /**
+     * @parma {canvas} canvas  // 测试双线性差值
+     */
+    bilinear(canvas){
+      canvas.width=400
+      canvas.height=400
+      let ctx = canvas.getContext('2d')
+      console.log(ctx)
+      ctx.fillText('.',0,0)
+      ctx.fillText('.',0,100)
+      ctx.fillText('.',100,0)
+      ctx.fillText('.',100,100)
+    },
   },
   created(){
     let canvas = this.getCanvas(this.item,false,6)
     document.body.appendChild(canvas)
   },
-  // mounted() {
-  //   let canvas =  this.getCanvas(this.item,false,6);
-  //   document.body.appendChild(canvas)
-  // },
+  mounted() {
+    // let canvas =  this.getCanvas(this.item,false,6);
+    // document.body.appendChild(canvas)
+    this.bilinear(this.$refs['bilinear'])
+  },
 };
 </script>
 <style lang="scss" >
@@ -125,8 +141,8 @@ export default {
 canvas{
   border: 1px solid black;
   // font-family: 'wind';
-  width: 100px;
-  height: 100px;
+  // width: 100px;
+  // height: 100px;
 }
 
 </style>
