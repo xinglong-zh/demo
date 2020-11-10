@@ -1,0 +1,9 @@
+@font-face {
+    font-family: 'cloud';
+    src: url('../font/cloud.ttf');
+  }
+  
+  @font-face {
+    font-family:'wind';
+    src: url('../font/wind.ttf');
+  }
