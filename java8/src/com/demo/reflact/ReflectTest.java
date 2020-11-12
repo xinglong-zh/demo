@@ -1,10 +1,12 @@
 package com.demo.reflact;
 
 import javax.swing.text.Style;
+import java.beans.IntrospectionException;
+import java.beans.PropertyDescriptor;
 import java.lang.reflect.*;
 
 public class ReflectTest {
-    public static void main(String[] args) throws ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException {
+    public static void main(String[] args) throws ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException, IntrospectionException {
         String s = Student.class.getName();
         System.out.println(s);
 
@@ -16,10 +18,20 @@ public class ReflectTest {
         System.out.println("-------------------");
 //        System.out.println(student);
 
+        /**
+         * 获取属性 , 和属性值
+         */
         Field[] fields = Student.class.getFields();
         for (Field field:fields){
-            System.out.println(field);
+//            System.out.println(field);
+            PropertyDescriptor descriptor = new PropertyDescriptor(field.getName(),Student.class);
+            Method readMethod = descriptor.getReadMethod();
+            Method writeMethod = descriptor.getWriteMethod();
+
+            Object o1 = readMethod.invoke(new Student());  // 调用getter
+
         }
+
         Field[] declaredFields = Student.class.getDeclaredFields();
         for (Field field:declaredFields){
             System.out.println(field);

@@ -6,14 +6,13 @@
 
 <script>
 import * as L from "leaflet";
-import 'axios'
-import Axios from 'axios';
-
+// import Axios from 'axios';
 export default {
   name: "demoMap",
   data() {
     return {
-      geojson:null
+      geojson:null,
+      map:null,
     };
   },
   props: {
@@ -34,7 +33,8 @@ export default {
   methods: {
     async initMap() {
       let map = L.map("map").setView([51.505, -0.09], 13);
-      // L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(map)
+      this.map = map
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(map)
       // let info = L.control();
       //  control 用来展示信息 ,和交互
       // info.onAdd = function(){
@@ -58,58 +58,58 @@ export default {
       // L.control.layers(baseMaps,overLayerMaps).addTo(map)
       // L.control.scale().addTo(map)
 
-      const res =  await Axios.get('./feature.json')
-      this.geojson = L.geoJSON(res.data,
-      {
-        style:function(geoJsonFeature){
-          // console.log('style',geoJsonFeature)
-          // if(geoJsonFeature.properties.name){
-          //   return {
-          //     // color:'red'
-          //   }
-          // }else{
-          //   return {
-          //     opacity:0
-          //   }
-          // }
-          if(geoJsonFeature.properties.desc){
-            // 主线
-            return {
-              color:'red',
-              opacity:1
-            }
-          }else{
-            // 分支
-            return {
-              // 
-              // color:'red',
-              opacity:0.5,
-              dashArray:'5 1 0'
-            }
-          }
-        },
-        pointToLayer:function(geoJsonPoint,latlng){
-          // console.log('point',geoJsonPoint,latlng)
-          // if(geoJsonPoint.properties)
-          // return L.circleMarker(latlng,{radius:3})
-          let markerOptions = {
-            color:'red',
-            opacity:1,
-            radius:2,
-          }
-          // 主线 trace  都保留了tracekey 属性 用来追踪
-          if(geoJsonPoint.properties.trace){
-              markerOptions = Object.assign({},markerOptions,{radius:4,opacity:1})         
-          }else{
-              markerOptions = Object.assign({},markerOptions,{color:''})
-          }
-          return L.circleMarker(latlng,markerOptions)
-        },
-        onEachFeature:this.featuresInteractive
-      }
+      // const res =  await Axios.get('./feature.json')
+      // this.geojson = L.geoJSON(res.data,
+      // {
+      //   style:function(geoJsonFeature){
+      //     // console.log('style',geoJsonFeature)
+      //     // if(geoJsonFeature.properties.name){
+      //     //   return {
+      //     //     // color:'red'
+      //     //   }
+      //     // }else{
+      //     //   return {
+      //     //     opacity:0
+      //     //   }
+      //     // }
+      //     if(geoJsonFeature.properties.desc){
+      //       // 主线
+      //       return {
+      //         color:'red',
+      //         opacity:1
+      //       }
+      //     }else{
+      //       // 分支
+      //       return {
+      //         // 
+      //         // color:'red',
+      //         opacity:0.5,
+      //         dashArray:'5 1 0'
+      //       }
+      //     }
+      //   },
+      //   pointToLayer:function(geoJsonPoint,latlng){
+      //     // console.log('point',geoJsonPoint,latlng)
+      //     // if(geoJsonPoint.properties)
+      //     // return L.circleMarker(latlng,{radius:3})
+      //     let markerOptions = {
+      //       color:'red',
+      //       opacity:1,
+      //       radius:2,
+      //     }
+      //     // 主线 trace  都保留了tracekey 属性 用来追踪
+      //     if(geoJsonPoint.properties.trace){
+      //         markerOptions = Object.assign({},markerOptions,{radius:4,opacity:1})         
+      //     }else{
+      //         markerOptions = Object.assign({},markerOptions,{color:''})
+      //     }
+      //     return L.circleMarker(latlng,markerOptions)
+      //   },
+      //   onEachFeature:this.featuresInteractive
+      // }
         
-        ).addTo(map)
-      map.fitBounds(this.geojson.getBounds())
+      //   ).addTo(map)
+      // map.fitBounds(this.geojson.getBounds())
     },
     /**
      * 自定义响应事件
@@ -147,10 +147,45 @@ export default {
            console.log(_this)
            
         }
+    },
+    /**
+     * 测试自定义control
+     */
+    testControl(){
+       L.Control.Demo = L.Control.extend({
+         options:{},
+         initialize:function(options){
+           L.setOptions(this,options) // 设置对象
+         },
+         onAdd:function(map){
+          L.DomUtil.create('image',map)
+
+         },
+         onRemove:function(){
+           console.log('onRemove')
+         },
+         _update:function(){
+           // dosomething  update
+           console.log('do something update')
+         },
+
+       })
+
+       console.log(L.Control.Demo)
+
+      let demo = new L.Control.Demo()
+      demo.addTo(this.map)
+      //  L.control.demo = function(ops){
+      //    return L.Control.Demo(ops)
+      //  }
+
+
+      //  L.control.demo().addTo(this.map)
     }
   },
   mounted() {
     this.initMap();
+    this.testControl()
   },
 };
 </script>

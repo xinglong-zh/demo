@@ -7,6 +7,34 @@
       <h3>双线性差值demo</h3>
       <canvas width="400" height="400" ref="bilinear"></canvas>
     </div>
+    <hr>
+    验证布局
+    <div class="control-container">
+      <div class="control-layers">
+        <span>名称</span><span class="showEye" /><span class="close" />
+      </div>
+      <div class="control-layers">
+        <span>名称</span><span class="NOTshowEye" /><span class="close" />
+      </div>
+      <div class="control-layers">
+        <span>名称</span><span class="showEye" /><span class="close" />
+      </div>
+      <div class="control-layers">
+        <span>名称</span><span class="showEye" /><span class="close" />
+      </div>
+      <div class="control-layers">
+        <span>名称</span><span class="NOTshowEye" /><span class="close" />
+      </div>
+      <div class="control-layers">
+        <span>名称</span><span class="NOTshowEye" /><span class="close" />
+      </div>
+      <div class="control-layers">
+        <span>名称</span><span class="showEye" /><span class="close" />
+      </div>
+      
+    </div>
+    <hr>
+
   </div>
 </template>
 
@@ -133,7 +161,7 @@ export default {
   },
 };
 </script>
-<style lang="scss" >
+<style lang="scss" scoped >
 .demo {
   font-family: 'cloud';
   font-size: 16px;
@@ -143,6 +171,47 @@ canvas{
   // font-family: 'wind';
   // width: 100px;
   // height: 100px;
+}
+
+.control-layers{
+  display: flex;
+  span{
+    margin-left: 20px;
+    display: block;
+  }
+  
+  .showEye{
+    // margin-left: 20px;
+    height: 16px;
+    width: 16px;
+    // background: url('./eye.png');
+    background-image: url(./eye.png);
+    background-size: cover;
+    // color: red;
+    // background-color: #000000;
+    // border: 1px solid red;
+  }
+  .NOTshowEye{
+    // margin-left: 20px;
+    height: 16px;
+    width: 16px;
+    background: url('./eye1.png');
+    background-size: cover;
+  }
+  .close{
+     margin-left: 20px;
+    height: 16px;
+    width: 16px;
+    background: url('./close.png');
+    background-size: cover;
+  } 
+
+}
+.control-container{
+  height: 100px;
+  overflow-y: auto;
+  width: 160px;
+  border: 1px solid red;
 }
 
 </style>
