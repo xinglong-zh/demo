@@ -4,11 +4,17 @@ import java.io.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 
 public class stream {
     public static void main(String[] args) throws IOException {
         List<Integer> list = new ArrayList(){{add(1);add(2);add(3);}};
+        Integer reduce = list.stream().reduce(0, Integer::sum);
+        System.out.println(reduce);
         System.out.println(list);
 
         int sum = list.stream().mapToInt(Integer::intValue).sum();
@@ -30,6 +36,10 @@ public class stream {
 
         boolean b = s.startsWith("x", 5);
         System.out.println(b);
+
+        ExecutorService pool = Executors.newCachedThreadPool();
+
+
 
 
     }
