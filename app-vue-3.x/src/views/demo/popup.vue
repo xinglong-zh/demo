@@ -4,8 +4,46 @@
       <span style="font-family: cloud">3</span>
       <span style="font-family:wind">6</span>
       <br>
-      <h3>双线性差值demo</h3>
+      <h3>双线性差值demo {{time}}</h3>
       <canvas width="400" height="400" ref="bilinear"></canvas>
+    </div>
+    <hr>
+    验证布局
+    <div class="control-container">
+      <div class="control-layers">
+        <span>名称</span><span class="showEye" /><span class="close" />
+      </div>
+      <div class="control-layers">
+        <span>名称</span><span class="NOTshowEye" /><span class="close" />
+      </div>
+      <div class="control-layers">
+        <span>名称</span><span class="showEye" /><span class="close" />
+      </div>
+      <div class="control-layers">
+        <span>名称</span><span class="showEye" /><span class="close" />
+      </div>
+      <div class="control-layers">
+        <span>名称</span><span class="NOTshowEye" /><span class="close" />
+      </div>
+      <div class="control-layers">
+        <span>名称</span><span class="NOTshowEye" /><span class="close" />
+      </div>
+      <div class="control-layers">
+        <span>名称</span><span class="showEye" /><span class="close" />
+      </div>
+      
+    </div>
+    <hr>
+    <div class="container_right">
+        <div class="_left">
+            <div :class="showRight?'showRight':'hideRight'" @click="handleClick()"></div>
+        </div>
+        <transition name="bounce">
+          <div class="_right" v-if="showRight">
+            右侧容器
+          </div>
+        </transition>
+        
     </div>
   </div>
 </template>
@@ -43,6 +81,8 @@ export default {
             "TELEID": "",
             "RTIME": "1570291200000"
         },
+        time:null,
+        showRight:true,
     }
   },
   methods: {
@@ -121,10 +161,15 @@ export default {
       ctx.fillText('.',100,0)
       ctx.fillText('.',100,100)
     },
+    handleClick(){
+      this.showRight=!this.showRight
+    }
   },
   created(){
     let canvas = this.getCanvas(this.item,false,6)
     document.body.appendChild(canvas)
+    // setInterval(()=>{this.time = Date.now()},1000)
+
   },
   mounted() {
     // let canvas =  this.getCanvas(this.item,false,6);
@@ -133,7 +178,7 @@ export default {
   },
 };
 </script>
-<style lang="scss" >
+<style lang="scss" scoped >
 .demo {
   font-family: 'cloud';
   font-size: 16px;
@@ -144,5 +189,104 @@ canvas{
   // width: 100px;
   // height: 100px;
 }
+
+.control-layers{
+  display: flex;
+  span{
+    margin-left: 20px;
+    display: block;
+  }
+  
+  .showEye{
+    // margin-left: 20px;
+    height: 16px;
+    width: 16px;
+    // background: url('./eye.png');
+    background-image: url(./eye.png);
+    background-size: cover;
+    // color: red;
+    // background-color: #000000;
+    // border: 1px solid red;
+  }
+  .NOTshowEye{
+    // margin-left: 20px;
+    height: 16px;
+    width: 16px;
+    background: url('./eye1.png');
+    background-size: cover;
+  }
+  .close{
+     margin-left: 20px;
+    height: 16px;
+    width: 16px;
+    background: url('./close.png');
+    background-size: cover;
+  } 
+
+}
+.control-container{
+  height: 100px;
+  overflow-y: auto;
+  width: 160px;
+  border: 1px solid red;
+}
+
+.container_right{
+  position: fixed;
+  right: 0px;
+  bottom: 20%;
+  height: 50%;
+  // width: 40%;
+  border: 1px solid red;
+  display: flex;
+  background: rgba($color: #000000, $alpha: 0.3);
+
+  ._left {
+    display: flex;
+    width: 20px;
+    border: 1px solid red;
+    justify-content: center;
+    align-items: center;
+    .showRight{
+      width: 100%;
+      background-image: url(./showRight.png);
+      background-size: cover;
+      height: 50px;
+    }
+    .hideRight{
+      width: 100%;
+      background-image: url(./hideRight.png);
+      background-size: cover;
+      height: 50px;
+    }
+  }
+  ._right{
+    display: flex;
+    width: 50vw;
+  }
+}
+
+.bounce-enter-active {
+  transition:bounce-in .5s ;
+}
+.bounce-leave-active {
+  transition:bounce-in 2s reverse ;
+}
+@keyframes bounce-in {
+  
+  0% {
+    opacity: 1.0;
+  }
+ 
+  50%{
+    opacity: 0.5;
+  }
+ 
+  100%{
+    opacity: 0;
+  }
+  
+}
+
 
 </style>

@@ -34,7 +34,7 @@
     "src/**/*.vue",
     "tests/**/*.ts",
     "tests/**/*.tsx"
-  ],
+, "src/views/map/LayersControl.js"  ],
   "exclude": [
     "node_modules"
   ]
