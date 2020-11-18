@@ -148,40 +148,6 @@ export default {
            
         }
     },
-    /**
-     * 测试自定义control
-     */
-    testControl(){
-       L.Control.Demo = L.Control.extend({
-         options:{},
-         initialize:function(options){
-           L.setOptions(this,options) // 设置对象
-         },
-         onAdd:function(map){
-          L.DomUtil.create('image',map)
-
-         },
-         onRemove:function(){
-           console.log('onRemove')
-         },
-         _update:function(){
-           // dosomething  update
-           console.log('do something update')
-         },
-
-       })
-
-       console.log(L.Control.Demo)
-
-      let demo = new L.Control.Demo()
-      demo.addTo(this.map)
-      //  L.control.demo = function(ops){
-      //    return L.Control.Demo(ops)
-      //  }
-
-
-      //  L.control.demo().addTo(this.map)
-    }
   },
   mounted() {
     this.initMap();
