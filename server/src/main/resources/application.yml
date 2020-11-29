@@ -6,7 +6,6 @@ spring:
     consul:
       discovery:
         serviceName: myprefix-${spring.application.name}
-
 management:
   server:
-    port: 4452
+    port: 4454

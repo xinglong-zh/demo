@@ -9,9 +9,9 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.example</groupId>
-    <artifactId>server</artifactId>
+    <artifactId>provider</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>server</name>
+    <name>provider</name>
     <description>Demo project for Spring Boot</description>
 
     <properties>
@@ -39,7 +39,7 @@
             <scope>test</scope>
         </dependency>
 
-<!--        spring-cloud-->
+        <!--        spring-cloud-->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-consul-discovery</artifactId>
