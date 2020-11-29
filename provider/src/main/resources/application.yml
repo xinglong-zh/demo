@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: provider
+
+  cloud:
+    consul:
+      discovery:
+        serviceName: prefix-${spring.application.name}
+
+management:
+  server:
+    port: 4452
+
+server:
+  port: 8081

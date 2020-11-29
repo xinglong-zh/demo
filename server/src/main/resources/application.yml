@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: myApp
+
+  cloud:
+    consul:
+      discovery:
+        serviceName: myprefix-${spring.application.name}
+management:
+  server:
+    port: 4454
