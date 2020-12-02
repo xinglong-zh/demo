@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 @Data
 public class StoreServiceImpl implements StoreService {
 
-    @Autowired
+//    @Autowired
     private  Animal animal;
 
 

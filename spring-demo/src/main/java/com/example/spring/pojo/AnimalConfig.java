@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Configuration;
 /**
  * @author Administrator
  */
-@Configuration
+//@Configuration
 public class AnimalConfig {
     public static Animal getAnimal(){
         return new Cat("小蓝","白色");
