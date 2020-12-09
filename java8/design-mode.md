@@ -57,6 +57,10 @@
 
 ### 单例模式
 
+---
+    > Ensure a class has only one instance, and provide a global point of access to it.
+    （确保某一个类只有一个实例，而且自行实例化并向整个系统提供这个实例。）
+
 #### 饿汉单例模式
 
 1. 饿汉单例模式下 , 初始化会创建final类型的变量, 保证实例唯一  , 不存在线程安全问题
@@ -203,16 +207,13 @@ public enum SingleEnum {
 ```
 
 ### 工厂模式
+---
+    > Define an interface for creating an object,but let subclasses decide which class toinstantiate.Factory Method lets a class defer instantiation to subclasses.
+    （定义一个用于创建对象的接口，让子类决定实例化哪一个类。工厂方法使一个类的实例化延迟到其子类。）
 
-![image-20201209183302587](D:\testspace\github\demo\java8\images\image-20201209183302587.png)
+![image-20201209183302587](./images/image-20201209183302587.png)
 
 ```java
-
-
-
-
-
-
 
 /** 抽象工厂方法 ,采用泛型 */
 public abstract class AbstractHumanFactory {
@@ -221,7 +222,8 @@ public abstract class AbstractHumanFactory {
 
 /**
  * 抽象工厂的具体实现类 ,
- * 使用泛型 + 反射
+ * 使用泛型 + 反射 , 实例化的对象,由子类决定
+ * 如果去掉 抽象工厂 , createHuman 变为静态方法 , 则降级为简单工厂模式 , 去掉了拓展 , 不符合开闭原则
  */
 public class HumanFactory extends AbstractHumanFactory {
     @Override
@@ -277,8 +279,81 @@ public class Client {
 
 ```
 
+
 ### 抽象工厂模式
 
+---
+Provide an interface for creating families of related or dependent objects without specifyingtheir concrete classes.
+（为创建一组相关或相互依赖的对象提供一个接口，而且无须指定它们的具体类。）
+```java
+public interface Human {
+    void getColor();
+    void getSex();
+    void talk();
+}
+/** 抽象类 ,实现了接口的共有方法 */
+public abstract class AbstractYellowHuman implements Human {
+    public void getColor(){
+        System.out.println("黄色皮肤");
+    }
+    public void talk(){
+        System.out.println(this.getClass()+"在说话");
+    }
+
+}
+
+/**  实现特有方法*/
+public class MaleYellowHuman extends AbstractYellowHuman {
+    @Override
+    public void getSex() {
+        System.out.println("男性");
+    }
+}
+
+public class FemaleYellowHuman extends AbstractYellowHuman {
+    @Override
+    public void getSex() {
+        System.out.println("女性");
+    }
+}
+/**  工厂方法 */
+public class MaleFactory implements HumanFactory {
+    @Override
+    public Human createYellowHuman() {
+        return new MaleYellowHuman();
+    }
+
+    @Override
+    public Human createWhiteHuman() {
+        return new MaleWhiteHuman();
+    }
+}
+
+public class FemaleFactory implements HumanFactory {
+    @Override
+    public Human createYellowHuman() {
+        return new FemaleYellowHuman();
+    }
+
+    @Override
+    public Human createWhiteHuman() {
+        return new FemaleWhiteHuman();
+    }
+}
+
+public class Client {
+    public static void main(String[] args) {
+//       第一条生成线 , 女性生产线 , 生产女性人种
+        HumanFactory femaleFactory = new FemaleFactory();
+        femaleFactory.createYellowHuman().getColor();
+        femaleFactory.createWhiteHuman().getColor();
+//        第二条生成线, 男性生成线 ,生产女性人种
+        MaleFactory maleFactory = new MaleFactory();
+        maleFactory.createYellowHuman().getColor();
+        maleFactory.createWhiteHuman().getColor();
+    }
+}
+```
 ### 模板模式
 
 ### 建造者模式
