@@ -2,7 +2,7 @@
 /shelf/
 /workspace.xml
 # Datasource local storage ignored files
-/../../../../../:\github\demo\spring-boot\.idea/dataSources/
+/../../../../../../../:\testspace\github\demo\java8\design-mode\.idea/dataSources/
 /dataSources.local.xml
 # Editor-based HTTP Client requests
 /httpRequests/
