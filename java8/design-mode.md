@@ -356,7 +356,146 @@ public class Client {
 ```
 ### 模板模式
 
+---
+
+Define the skeleton of an algorithm in an operation,deferring some steps tosubclasses.Template Method lets subclasses redefine certain steps of an algorithm withoutchanging the algorithm's structure.（定义一个操作中的算法的框架，而将一些步骤延迟到子类中。使得子类可以不改变一个算法的结构即可重定义该算法的某些特定步骤。）
+
+通过继承机智实现  , 模板方法 使用final 修饰 , 防止子类复写 .
+
+```java
+/** 负责提供模板方法 ,run */
+public abstract class BenzModel {
+    abstract void start();
+
+    abstract void stop();
+
+    abstract void alarm();
+
+    /**
+     * hook method  , 外界条件的改变 ,影响模板方法的执行 .
+     * @return
+     */
+    abstract boolean isAlarm();
+
+    /**
+     * 模板方法 , 加上final 修饰 , 防止被复写 ,
+     * 子类通过 isAlarm 控制了父类的行为
+     */
+    final void run() {
+        start();
+        if (this.isAlarm()) {
+            alarm();
+        }
+        stop();
+    }
+}
+```
+
+```java
+public class BenzH1Model extends BenzModel {
+    @Override
+    void start() {
+        System.out.println("benz1" + "启动了");
+    }
+
+    @Override
+    void stop() {
+        System.out.println("benz1" + "停止了");
+    }
+
+    @Override
+    void alarm() {
+        System.out.println("benz1" + "按喇叭");
+    }
+
+    @Override
+    boolean isAlarm() {
+        return true;
+    }
+}
+```
+
 ### 建造者模式
+
+---
+
+Separate the construction of a complex object from its representation so that the sameconstruction process can create different representations.（将一个复杂对象的构建与它的表示分离，使得同样的构建过程可以创建不同的表示。）
+
+```java
+/**
+ * 产品类 ,  可以自定义执行顺序  , 或 装配不同零件
+ * 同样实现了模板模式
+ */
+public abstract class CarModel {
+    private ArrayList<String> sequence = new ArrayList<>();
+    abstract void start();
+
+    abstract void stop();
+
+    abstract void alarm();
+
+    final void run() {
+        for (int i=0;i<sequence.size();i++){
+            String s = sequence.get(i);
+            if("start".equalsIgnoreCase(s)){
+                this.start();
+            }
+            if("stop".equalsIgnoreCase(s)){
+                this.stop();
+            }
+            if("alarm".equalsIgnoreCase(s)){
+                this.alarm();
+            }
+        }
+    }
+
+    final void setSequence(ArrayList sequence){
+        this.sequence = sequence;
+    }
+
+}
+```
+
+```java
+/**
+ * 抽象的建造者 ,
+ * 具体的功能由具体实现类实现
+ */
+public abstract class CarBuilder {
+    abstract void setSequence(ArrayList<String> sequence);
+    abstract CarModel getCarModel();
+}
+```
+
+```java
+/**
+ * 导演类 , 封装了构造过程 , 返回构造后的对象
+ */
+
+public class Director {
+    private ArrayList<String> sequence = new ArrayList<>();
+    private BenzBuilder benzBuilder = new BenzBuilder();
+    public CarModel getABenzModel(){
+        this.sequence.clear();
+        sequence.add("alarm");
+        sequence.add("start");
+        sequence.add("stop");
+        benzBuilder.setSequence(sequence);
+        return benzBuilder.getCarModel();
+    }
+
+
+    public CarModel getBBenzModel(){
+        this.sequence.clear();
+        sequence.add("start");
+        sequence.add("stop");
+        benzBuilder.setSequence(sequence);
+        return benzBuilder.getCarModel();
+    }
+}
+```
+
+
 
 ### 代理模式
 
