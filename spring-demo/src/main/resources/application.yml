@@ -1,0 +1,17 @@
+station:
+  name: 小爱同学
+  map:
+    ke1: 122
+    key2: 144
+
+  list: [1,2,4,5]
+  stations:
+    - name: 测试嵌套name
+      value: 测试嵌套station
+  maps:
+    123: {name: 嵌套name, value: 嵌套value}
+
+
+
+server:
+  port: 8081
