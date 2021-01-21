@@ -13,6 +13,7 @@
     "echarts": "^4.9.0",
     "element-ui": "^2.13.2",
     "leaflet": "^1.7.1",
+    "topojson": "^3.0.2",
     "vue": "^3.0.0-rc.10",
     "vue-router": "^4.0.0-0",
     "vuex": "^4.0.0-0"

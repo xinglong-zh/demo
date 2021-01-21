@@ -6,13 +6,56 @@
 
 <script>
 import * as L from "leaflet";
+import * as topojson from "topojson";
+//extend Leaflet to create a GeoJSON layer from a TopoJSON file
+L.TopoJSON = L.GeoJSON.extend({
+  addData: function (data) {
+    var geojson, key;
+    if (data.type === "Topology") {
+      for (key in data.objects) {
+        // eslint-disable-next-line no-prototype-builtins
+        if (data.objects.hasOwnProperty(key)) {
+          geojson = topojson.feature(data, data.objects[key]);
+          L.GeoJSON.prototype.addData.call(this, geojson);
+        }
+      }
+      return this;
+    }
+    L.GeoJSON.prototype.addData.call(this, data);
+    return this;
+  },
+});
+L.topoJson = function (data, options) {
+  return new L.TopoJSON(data, options);
+};
+
+// 自定义tile
+L.GridLayer.DebugCoords = L.GridLayer.extend({
+  createTile: function (coords, done) {
+    var tile = document.createElement("div");
+    tile.innerHTML = [coords.x, coords.y, coords.z].join(", ");
+    tile.style.outline = "1px solid red";
+
+    setTimeout(function () {
+      done(null, tile); // Syntax is 'done(error, tile)'
+    }, 500 + Math.random() * 1500);
+
+    return tile;
+  },
+});
+
+L.gridLayer.debugCoords = function (opts) {
+  return new L.GridLayer.DebugCoords(opts);
+};
+
 // import Axios from 'axios';
+
 export default {
   name: "demoMap",
   data() {
     return {
-      geojson:null,
-      map:null,
+      geojson: null,
+      map: null,
     };
   },
   props: {
@@ -32,9 +75,104 @@ export default {
   },
   methods: {
     async initMap() {
-      let map = L.map("map").setView([51.505, -0.09], 13);
-      this.map = map
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(map)
+      let map = L.map("map").setView([51.505, -0.09], 3);
+      this.map = map;
+      // L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(map)
+      // L.tileLayer("http://localhost/darkmap/{z}/{x}/{y}.png", {
+      //   zoomOffset: 0,
+      // }).addTo(map);
+
+      // Axios.get('region.json').then(res=>{
+      //   L.topoJson(res.data,{color:'red',weight:1}).addTo(map)
+      // })
+
+      L.tileLayer("http://10.1.64.146/darkmap/{z}/{y}/{x}.png", {
+        zoomOffset: 0,
+      }).addTo(map);
+
+      L.gridLayer.debugCoords().addTo(map);
+
+      // var trd = [63.41, 10.41];
+
+      // var marker = L.marker(trd).addTo(map);
+
+      // var pane = map.getPane("markerPane");
+
+      // var paneCorner = document.createElement("div");
+      // paneCorner.style.width = "12px";
+      // paneCorner.style.height = "12px";
+      // paneCorner.style.borderTop = "2px red solid";
+      // paneCorner.style.borderLeft = "2px red solid";
+
+      // pane.appendChild(paneCorner);
+
+      // marker._icon.style.border = "1px solid blue";
+
+      //  L.marker(map.unproject([0, 0]), {
+      //   icon: L.divIcon({
+      //     className: "crsMarker",
+      //     iconAnchor: [0, 0],
+      //   }),
+      // }).addTo(map);
+
+      // var markerOffsetLine = L.polyline(
+      //   [
+      //     [0, 0],
+      //     [0, 0],
+      //   ],
+      //   { color: "skyblue" }
+      // ).addTo(map);
+      // var iconOffsetLine = L.polyline(
+      //   [
+      //     [0, 0],
+      //     [0, 0],
+      //   ],
+      //   { color: "blue" }
+      // ).addTo(map);
+
+      // function info() {
+      //   var pixelOrigin = map.getPixelOrigin();
+      //   var markerPixelCoords = map.project(trd, map.getZoom());
+      //   var markerAnchor = marker.options.icon.options.iconAnchor;
+      //   var markerOffset = marker._icon._leaflet_pos;
+
+      //   document.getElementById("info").innerHTML =
+      //     '<div style="color: green">CRS origin: 0,0</div>' +
+      //     '<div style="color: red">px origin: &Delta;' +
+      //     pixelOrigin.x +
+      //     "," +
+      //     pixelOrigin.y +
+      //     "</div>" +
+      //     '<div style="color: blue">marker px coords:' +
+      //     markerPixelCoords.x.toFixed(2) +
+      //     "," +
+      //     markerPixelCoords.y.toFixed(2) +
+      //     "</div>" +
+      //     '<div style="color: blue">marker anchor: &Delta;' +
+      //     markerAnchor[0] +
+      //     "," +
+      //     markerAnchor[1] +
+      //     "</div>" +
+      //     '<div style="color: skyblue">marker pane offset: &Delta;' +
+      //     markerOffset.x +
+      //     "," +
+      //     markerOffset.y +
+      //     "</div>";
+
+      //   markerOffsetLine.setLatLngs([
+      //     map.unproject(pixelOrigin),
+      //     map.unproject(pixelOrigin.add(markerOffset)),
+      //   ]);
+      //   iconOffsetLine.setLatLngs([
+      //     map.unproject(pixelOrigin.add(markerOffset)),
+      //     map.unproject(pixelOrigin.add(markerOffset).subtract(markerAnchor)),
+      //   ]);
+      // }
+
+      // map.on("load move moveend zoomend viewreset", info);
+
+      // info();
+
       // let info = L.control();
       //  control 用来展示信息 ,和交互
       // info.onAdd = function(){
@@ -81,7 +219,7 @@ export default {
       //     }else{
       //       // 分支
       //       return {
-      //         // 
+      //         //
       //         // color:'red',
       //         opacity:0.5,
       //         dashArray:'5 1 0'
@@ -99,7 +237,7 @@ export default {
       //     }
       //     // 主线 trace  都保留了tracekey 属性 用来追踪
       //     if(geoJsonPoint.properties.trace){
-      //         markerOptions = Object.assign({},markerOptions,{radius:4,opacity:1})         
+      //         markerOptions = Object.assign({},markerOptions,{radius:4,opacity:1})
       //     }else{
       //         markerOptions = Object.assign({},markerOptions,{color:''})
       //     }
@@ -107,64 +245,56 @@ export default {
       //   },
       //   onEachFeature:this.featuresInteractive
       // }
-        
+
       //   ).addTo(map)
       // map.fitBounds(this.geojson.getBounds())
     },
     /**
      * 自定义响应事件
      */
-    featuresInteractive(feature,layer){
-         let _this = this;
-        // console.log('methods',feature,layer)
-        if(feature.geometry.type==='Point'){
-            let marker = layer
-            marker.on(
-              {'mouseover':mouseover,
-              "mouseout":mouseout,
-              'click':click
-              }
-              )
-        }
+    featuresInteractive(feature, layer) {
+      let _this = this;
+      // console.log('methods',feature,layer)
+      if (feature.geometry.type === "Point") {
+        let marker = layer;
+        marker.on({ mouseover: mouseover, mouseout: mouseout, click: click });
+      }
 
-        /**
-         * 自定义触发事件
-         */
-        function mouseover(){
-          console.log('mouseover-e')
-        }
-        function mouseout(){
-           console.log('mouseout-e')
-        }
-        function click(e){
-           console.log('click-e',e, feature)
-           // reset style
-           // 1  本身是trace 上面的点 , 点击寻找当前的 traceKey
-          //  let traceKey = feature.properties.traceKey
+      /**
+       * 自定义触发事件
+       */
+      function mouseover() {
+        console.log("mouseover-e");
+      }
+      function mouseout() {
+        console.log("mouseout-e");
+      }
+      function click(e) {
+        console.log("click-e", e, feature);
+        // reset style
+        // 1  本身是trace 上面的点 , 点击寻找当前的 traceKey
+        //  let traceKey = feature.properties.traceKey
 
-
-           // 可以重置 geojson内部的样式 
-           console.log(_this)
-           
-        }
+        // 可以重置 geojson内部的样式
+        console.log(_this);
+      }
     },
   },
   mounted() {
     this.initMap();
-    this.testControl()
+    // this.testControl();
   },
 };
 </script>
 
 <style lang="scss" scoped>
-
 .container {
   height: 100vh;
   // width: 100vh;
   // overflow: hidden;
   box-sizing: border-box;
 }
-.map{
+.map {
   height: 100vh;
   // width: 100vh;
   border: 1px solid red;
@@ -174,6 +304,22 @@ export default {
   width: 60px;
   background: silver;
   border: 1px solid red;
+}
+
+#info {
+	position:absolute; 
+	top:0; 
+	right:0; 
+	width: 20em; 
+	height: 7.5em; 
+	background: rgba(255,255,255,.5); 
+	z-index:500; 
+	font: 12px Sans;
+}
+
+.crsMarker {
+	border-top: 2px green solid;
+	border-left: 2px green solid;
 }
 </style>
 
