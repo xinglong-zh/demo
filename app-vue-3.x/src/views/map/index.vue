@@ -6,13 +6,37 @@
 
 <script>
 import * as L from "leaflet";
-// import Axios from 'axios';
+import * as topojson from 'topojson'
+//extend Leaflet to create a GeoJSON layer from a TopoJSON file
+L.TopoJSON = L.GeoJSON.extend({
+  addData: function (data) {
+    var geojson, key;
+    if (data.type === "Topology") {
+      for (key in data.objects) {
+        // eslint-disable-next-line no-prototype-builtins
+        if (data.objects.hasOwnProperty(key)) {
+          geojson = topojson.feature(data, data.objects[key]);
+          L.GeoJSON.prototype.addData.call(this, geojson);
+        }
+      }
+      return this;
+    }
+    L.GeoJSON.prototype.addData.call(this, data);
+    return this;
+  },
+});
+L.topoJson = function (data, options) {
+  return new L.TopoJSON(data, options);
+};
+
+import Axios from 'axios';
+
 export default {
   name: "demoMap",
   data() {
     return {
-      geojson:null,
-      map:null,
+      geojson: null,
+      map: null,
     };
   },
   props: {
@@ -32,9 +56,19 @@ export default {
   },
   methods: {
     async initMap() {
-      let map = L.map("map").setView([51.505, -0.09], 13);
-      this.map = map
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(map)
+      let map = L.map("map").setView([51.505, -0.09], 3);
+      this.map = map;
+      // L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(map)
+      // L.tileLayer("http://localhost/darkmap/{z}/{x}/{y}.png", {
+      //   zoomOffset: 0,
+      // }).addTo(map);
+
+      Axios.get('region.json').then(res=>{
+        L.topoJson(res.data,{color:'red',weight:1}).addTo(map)
+      })
+
+
+      L.tileLayer('http://10.1.64.146/darkmap/{z}/{y}/{x}.png',{zoomOffset:0}).addTo(map);
       // let info = L.control();
       //  control 用来展示信息 ,和交互
       // info.onAdd = function(){
@@ -81,7 +115,7 @@ export default {
       //     }else{
       //       // 分支
       //       return {
-      //         // 
+      //         //
       //         // color:'red',
       //         opacity:0.5,
       //         dashArray:'5 1 0'
@@ -99,7 +133,7 @@ export default {
       //     }
       //     // 主线 trace  都保留了tracekey 属性 用来追踪
       //     if(geoJsonPoint.properties.trace){
-      //         markerOptions = Object.assign({},markerOptions,{radius:4,opacity:1})         
+      //         markerOptions = Object.assign({},markerOptions,{radius:4,opacity:1})
       //     }else{
       //         markerOptions = Object.assign({},markerOptions,{color:''})
       //     }
@@ -107,64 +141,56 @@ export default {
       //   },
       //   onEachFeature:this.featuresInteractive
       // }
-        
+
       //   ).addTo(map)
       // map.fitBounds(this.geojson.getBounds())
     },
     /**
      * 自定义响应事件
      */
-    featuresInteractive(feature,layer){
-         let _this = this;
-        // console.log('methods',feature,layer)
-        if(feature.geometry.type==='Point'){
-            let marker = layer
-            marker.on(
-              {'mouseover':mouseover,
-              "mouseout":mouseout,
-              'click':click
-              }
-              )
-        }
+    featuresInteractive(feature, layer) {
+      let _this = this;
+      // console.log('methods',feature,layer)
+      if (feature.geometry.type === "Point") {
+        let marker = layer;
+        marker.on({ mouseover: mouseover, mouseout: mouseout, click: click });
+      }
 
-        /**
-         * 自定义触发事件
-         */
-        function mouseover(){
-          console.log('mouseover-e')
-        }
-        function mouseout(){
-           console.log('mouseout-e')
-        }
-        function click(e){
-           console.log('click-e',e, feature)
-           // reset style
-           // 1  本身是trace 上面的点 , 点击寻找当前的 traceKey
-          //  let traceKey = feature.properties.traceKey
+      /**
+       * 自定义触发事件
+       */
+      function mouseover() {
+        console.log("mouseover-e");
+      }
+      function mouseout() {
+        console.log("mouseout-e");
+      }
+      function click(e) {
+        console.log("click-e", e, feature);
+        // reset style
+        // 1  本身是trace 上面的点 , 点击寻找当前的 traceKey
+        //  let traceKey = feature.properties.traceKey
 
-
-           // 可以重置 geojson内部的样式 
-           console.log(_this)
-           
-        }
+        // 可以重置 geojson内部的样式
+        console.log(_this);
+      }
     },
   },
   mounted() {
     this.initMap();
-    this.testControl()
+    // this.testControl();
   },
 };
 </script>
 
 <style lang="scss" scoped>
-
 .container {
   height: 100vh;
   // width: 100vh;
   // overflow: hidden;
   box-sizing: border-box;
 }
-.map{
+.map {
   height: 100vh;
   // width: 100vh;
   border: 1px solid red;
