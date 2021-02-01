@@ -34,16 +34,11 @@
       
     </div>
     <hr>
-    <div class="container_right">
-        <div class="_left">
-            <div :class="showRight?'showRight':'hideRight'" @click="handleClick()"></div>
-        </div>
-        <transition name="bounce">
-          <div class="_right" v-if="showRight">
-            右侧容器
-          </div>
-        </transition>
-        
+    <h3>验证z-index</h3>
+    <div class="low">
+      <div class="hight">
+
+      </div>
     </div>
   </div>
 </template>
@@ -288,5 +283,17 @@ canvas{
   
 }
 
+.low{
+  z-index: 200;
+  background: red;
+  height: 30px;
+}
+
+.hight{
+  z-index: 300;
+  background: blue;
+  height: 30px;
+  width: 60px;
+}
 
 </style>
