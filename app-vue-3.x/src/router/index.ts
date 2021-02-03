@@ -39,6 +39,11 @@ const routes = [
     path:'/pop',
     name:'pop',
     component:()=>import('@/views/demo/popup.vue')
+  },
+  {
+    path:'/multiMap',
+    name:'multiMap',
+    component:()=>import('@/views/map/multiMap.vue')
   }
 ]
 
