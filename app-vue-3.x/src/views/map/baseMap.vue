@@ -25,6 +25,7 @@ export default {
         center: [38, 104],
         zoom: 4,
         attributionControl: false,
+        worldCopyJump:true,
       }),
     },
     id:{
