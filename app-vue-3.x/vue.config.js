@@ -15,4 +15,5 @@ module.exports = {
             }
         }
     },
+    lintOnSave:false,
 }

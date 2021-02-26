@@ -58,6 +58,11 @@ L.circle.demo = function(opts){
   return new L.Circle.Demo(opts);
 }
 
+// import {canvasLayer} from '@/assets/js/contour/L.CanvasLayer'
+
+import {contourLayer} from '@/assets/js/contour/ContourLayer'  // 公司的js代码
+
+
 
 import Axios from 'axios';
 
@@ -84,7 +89,7 @@ export default {
     async initMap() {
       let map = L.map("map",{worldCopyJump:true}).setView([51.505, -0.09], 3);
       this.map = map;
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(map)
+      // L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(map)
       // L.tileLayer("http://localhost/darkmap/{z}/{x}/{y}.png", {
       //   zoomOffset: 0,
       // }).addTo(map);
@@ -93,14 +98,12 @@ export default {
       //   zoomOffset: 0,
       // }).addTo(map);
 
-      L.gridLayer.debugCoords().addTo(map);
+      // L.gridLayer.debugCoords().addTo(map);
 
       Axios.get('./contour.json').then(res=>{
         L.geoJSON(res.data).addTo(map);
       })
-      L.circle([50,50],{radius:20000,color:'red'}).addTo(map);
-      // L.circle.demo([55,55],{radius:20000,color:'blue'}).addTo(map);
-      // L.marker([50,50]).addTo(map);
+
     },
   },
   mounted() {
