@@ -44,7 +44,8 @@ vector Layers  transtorm latlng to pixels  and  drew the geometries using SVG or
 
 ### 实现思路
 
-扩展layers  ,
-在moveend 的时候 , 重新计算所有的位置
-
-vevtor Layers 的缺点是只计算了一次 , 然后一直保持不变
+扩展 geojson
+获取bounds  [89,1465] , [-89,-1230]   // 右上 , 左下
+geojson的数据是在 -180 , 180 之间的
+需要在移动的时候 ,进行clone() , 然后经纬加减360(环球)  , 参考gridLayer  , 由中心开始加载 ,   下一阵开始绘制, 优化性能.
+是否需要扩展一个layers , 可以实现此功能 , 然后 同时继承 geojson 和 canvasLayer

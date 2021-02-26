@@ -15,5 +15,5 @@ module.exports = {
             }
         }
     },
-    lintOnSave:false,
+    lintOnSave:'error',
 }

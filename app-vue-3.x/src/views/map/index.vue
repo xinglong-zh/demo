@@ -60,11 +60,11 @@ L.circle.demo = function(opts){
 
 // import {canvasLayer} from '@/assets/js/contour/L.CanvasLayer'
 
-import {contourLayer} from '@/assets/js/contour/ContourLayer'  // 公司的js代码
+// import {contourLayer} from '@/assets/js/contour/ContourLayer'  // 公司的js代码
 
 
 
-import Axios from 'axios';
+// import Axios from 'axios';
 
 export default {
   name: "demoMap",
@@ -89,7 +89,7 @@ export default {
     async initMap() {
       let map = L.map("map",{worldCopyJump:true}).setView([51.505, -0.09], 3);
       this.map = map;
-      // L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(map)
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(map)
       // L.tileLayer("http://localhost/darkmap/{z}/{x}/{y}.png", {
       //   zoomOffset: 0,
       // }).addTo(map);
@@ -98,11 +98,34 @@ export default {
       //   zoomOffset: 0,
       // }).addTo(map);
 
-      // L.gridLayer.debugCoords().addTo(map);
+      L.gridLayer.debugCoords().addTo(map);
 
-      Axios.get('./contour.json').then(res=>{
-        L.geoJSON(res.data).addTo(map);
-      })
+      // Axios.get('./contour.json').then(res=>{
+      //   L.geoJSON(res.data).addTo(map);
+      // })
+
+      // map.on('moveend',()=>{console.log(map.getCenter(),map.getBounds(),map.getSize(),map.getPixelWorldBounds())});
+
+      let p=12;
+      console.log(_copy(p,2,2));
+      
+
+        /**
+         * @param {*} point
+         * @param {number} stepL 左侧步数
+         * @param {number} stepL 右侧步数
+         */
+        function _copy (point,stepL,stepR){
+          let res =[point];
+          for(let i=0;i<stepL;i++){
+            res.push(point -360);
+          }
+          for(let i=0;i<stepR;i++){
+            res.push(point+360);
+          }
+          res.sort((a,b)=>Math.abs(a)-Math.abs(b));
+          return res;
+        }
 
     },
   },

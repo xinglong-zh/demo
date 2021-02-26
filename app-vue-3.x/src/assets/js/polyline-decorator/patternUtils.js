@@ -101,19 +101,19 @@ function projectPatternOnPointPath(pts, pattern) {
 * Finds the point which lies on the segment defined by points A and B,
 * at the given ratio of the distance from A to B, by linear interpolation.
 */
-function interpolateBetweenPoints(ptA, ptB, ratio) {
-    if (ptB.x !== ptA.x) {
-        return {
-            x: ptA.x + ratio * (ptB.x - ptA.x),
-            y: ptA.y + ratio * (ptB.y - ptA.y),
-        };
-    }
-    // special case where points lie on the same vertical axis
-    return {
-        x: ptA.x,
-        y: ptA.y + (ptB.y - ptA.y) * ratio,
-    };
-}
+// function interpolateBetweenPoints(ptA, ptB, ratio) {
+//     if (ptB.x !== ptA.x) {
+//         return {
+//             x: ptA.x + ratio * (ptB.x - ptA.x),
+//             y: ptA.y + ratio * (ptB.y - ptA.y),
+//         };
+//     }
+//     // special case where points lie on the same vertical axis
+//     return {
+//         x: ptA.x,
+//         y: ptA.y + (ptB.y - ptA.y) * ratio,
+//     };
+// }
 
 export {
     projectPatternOnPointPath,
