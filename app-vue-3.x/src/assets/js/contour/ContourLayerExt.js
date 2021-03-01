@@ -3,35 +3,37 @@
 
 import * as L from 'leaflet';
 
-import { projectPatternOnPointPath} from './polyline-decorator/patternUtils.js';
+import { projectPatternOnPointPath } from './polyline-decorator/patternUtils';
 
 var ContourLayerExt = L.GeoJSON.extend({
-    options:{
-        levelProp:'level',
+    options: {
+        levelProp: 'level',
         minZoom: 0,
         smooth: 'quadratic',
         weight: 1,
         noClip: true,
         ccopy: false,
+        worldCopyJump:true, // leaflet 效果是setPosition , 此处效果是copy 
         className: '',
-        symbol:{
+        symbol: {
             font: '15px bold sans-serif',
             textAlign: 'center',
             textBaseline: 'middle',
             stroke: true,
             weight: 3,
             color: 'white',
-            pattern:{offset:200,repeat:618,endOffset:200}
+            pattern: { offset: 200, repeat: 618, endOffset: 200 }
         }
     },
-    initialize:function (options) {
-        this._renderer = L.canvas({className:'contour-canvas ' + this.options.className});
-        L.GeoJSON.prototype.initialize.call(this,null,L.extend({renderer:this._renderer},options));
+    initialize: function (options) {
+        this._renderer = L.canvas({ className: 'contour-canvas ' + this.options.className });
+        L.GeoJSON.prototype.initialize.call(this, null, L.extend({ renderer: this._renderer }, options));
         this.setUrl(this.options.url);
     },
-    setUrl:function(url){
+    setUrl: function (url) {
+        // 这里xhr 为了发送数据使用 , 改用fetch ?
         this.options.url = url;
-        if(url == null)
+        if (url == null)
             return this.setData(null);
 
         var self = this;
@@ -56,43 +58,50 @@ var ContourLayerExt = L.GeoJSON.extend({
             self.setData(null);
         }
     },
-    setData:function (fc) {
-        this.clearLayers();
-        if(fc){
-            if(this.options.ccopy)
+    setData: function (fc) {
+        this.clearLayers(); // 先清除layers?  清除上一次的额layer
+        if (fc) {
+            this._feature = fc; // 存放最原始的feature , 方便后续计算
+            if (this.options.ccopy)
                 fc = this._ccopy(fc);
             this.addData(fc);
             this.nextUpdateMarkers();
             this.fire("updated")
-        }else{
+        } else {
             this.fire("nothing");
         }
     },
     //moveend 触发updateMarkers
-    onAdd:function(map){
+    onAdd: function (map) {
         this._renderer.addTo(map);
-        L.GeoJSON.prototype.onAdd.call(this,map);
-        map.on('moveend',this.nextUpdateMarkers,this);
+        L.GeoJSON.prototype.onAdd.call(this, map);
+        map.on('moveend', this.nextUpdateMarkers, this);
     },
 
-    onRemove:function(){
-        this._map.off('moveend',this.nextUpdateMarkers,this);
+    onRemove: function () {
+        this._map.off('moveend', this.nextUpdateMarkers, this);
         this._map.removeLayer(this._renderer);
     },
 
-    nextUpdateMarkers:function(){
-        L.Util.requestAnimFrame(this.updateMarkers,this);
+    nextUpdateMarkers: function () {
+        //  requestAnimFram 
+        L.Util.requestAnimFrame(this.updateMarkers, this);
+        // 这里还需要一个功能 , 更新fc的拷贝 , 和删除工作
+        if(this.options.worldCopyJump){
+            L.Util.requestAnimFrame(this._nextUpdateFeatures, this);
+        }
+       
     },
     // 更新等高线的标值
-    updateMarkers:function(){
+    updateMarkers: function () {
         // 移除旧marker
         var oldMarkers = [];
         for (let i in this._layers) {
-            if(this._layers[i]._class=='contour-marker'){
+            if (this._layers[i]._class == 'contour-marker') {
                 oldMarkers.push(this._layers[i]);
             }
         }
-        for(let  i in oldMarkers){
+        for (let i in oldMarkers) {
             this.removeLayer(oldMarkers[i])
         }
         // 重新添加marker
@@ -100,16 +109,16 @@ var ContourLayerExt = L.GeoJSON.extend({
             this._decorate(this._layers[i]);
         }
     },
-    _decorate:function(polyline){
+    _decorate: function (polyline) {
         var map = polyline._renderer._map;
         var symbol = this.options.symbol;
         var self = this;
-        (this.options.smooth=="quadratic" ? polyline._mps : polyline._parts).forEach(function (pts) {
-            var markers = projectPatternOnPointPath(pts,symbol.pattern)
+        (this.options.smooth == "quadratic" ? polyline._mps : polyline._parts).forEach(function (pts) {
+            var markers = projectPatternOnPointPath(pts, symbol.pattern)
             markers.forEach(function (marker) {
                 var latLng = map.layerPointToLatLng(marker.pt)
-                marker = L.textMarker(latLng,L.extend({fillColor:polyline.options.color},symbol,{
-                    renderer:self._renderer,
+                marker = L.textMarker(latLng, L.extend({ fillColor: polyline.options.color }, symbol, {
+                    renderer: self._renderer,
                     // rotate: marker.heading,
                     text: polyline.feature.properties[self.options.levelProp]
                 }));
@@ -124,18 +133,18 @@ var ContourLayerExt = L.GeoJSON.extend({
      * @return {*}
      * @private
      */
-    _ccopy:function (fc) {
+    _ccopy: function (fc) {
         //右侧的那份等值线
         const cp = JSON.parse(JSON.stringify(fc));
         //调整经度 +360
-        for(let feature of cp.features){
-            for(let lngLat of feature.geometry.coordinates){
+        for (let feature of cp.features) {
+            for (let lngLat of feature.geometry.coordinates) {
                 lngLat[0] += 360;
             }
         }
         fc.features.splice(fc.features.length, 0, ...cp.features);
         return fc;
-    }
+    },
     // /**
     //  * 在右侧复制一份等值线，并拼接左尾等于右头的等值线
     //  *
@@ -183,5 +192,29 @@ var ContourLayerExt = L.GeoJSON.extend({
     //     fc.features.splice(fc.features.length, 0, ...cp.features);
     //     return fc;
     // },
+    /**
+     * 拷贝等高线和移除 , 目的是使等高先连续 ,类似于tile的无限拖动效果 , layers 经度 + - 360
+     */
+    _nextUpdateFeatures: function () {
+        let feature = JSON.parse(JSON.stringify(this._feature));
+        let bounds = this._map.getBounds() // 当前bounds的值 
+        // 计算左右两侧需要添加或移除的feature
+        let stepR = Math.ceil((bounds._northEast.lng) / 360);  // 向上取整
+        let stepL = Math.floor((bounds._southWest.lng) / 360); // 向下取整
+        this.clearLayers();  
+        // console.log(bounds, stepL, stepR);
+        for (let i = stepL - 1; i <= stepR; i++) {
+            let featureTemp = JSON.parse(JSON.stringify(feature));
+            for (let fc of featureTemp.features) {
+                for (let latLng of fc.geometry.coordinates) {
+                    latLng[0] += 360 * i;
+                }
+            }
+            L.Util.requestAnimFrame(this.addData(featureTemp));
+        }
+
+
+        // 计算stepL  , stepR  
+    },
 });
 export default ContourLayerExt;

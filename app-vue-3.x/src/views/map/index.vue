@@ -60,7 +60,7 @@ L.circle.demo = function(opts){
 
 // import {canvasLayer} from '@/assets/js/contour/L.CanvasLayer'
 
-// import {contourLayer} from '@/assets/js/contour/ContourLayer'  // 公司的js代码
+// import ContourLayerExt from '@/assets/js/contour/ContourLayerExt'  // 公司的js代码
 
 
 
@@ -87,51 +87,20 @@ export default {
   },
   methods: {
     async initMap() {
-      let map = L.map("map",{worldCopyJump:true}).setView([51.505, -0.09], 3);
+      let map = L.map("map",{worldCopyJump:false}).setView([51.505, -0.09], 3);
       this.map = map;
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(map)
-      // L.tileLayer("http://localhost/darkmap/{z}/{x}/{y}.png", {
-      //   zoomOffset: 0,
-      // }).addTo(map);
-
-      // L.tileLayer("http://10.1.64.146/darkmap/{z}/{y}/{x}.png", {
-      //   zoomOffset: 0,
-      // }).addTo(map);
 
       L.gridLayer.debugCoords().addTo(map);
 
-      // Axios.get('./contour.json').then(res=>{
-      //   L.geoJSON(res.data).addTo(map);
-      // })
+      // new ContourLayerExt({url:'./contour.json'}).addTo(map);
+      // 探索WelGL 差值问题
 
-      // map.on('moveend',()=>{console.log(map.getCenter(),map.getBounds(),map.getSize(),map.getPixelWorldBounds())});
-
-      let p=12;
-      console.log(_copy(p,2,2));
-      
-
-        /**
-         * @param {*} point
-         * @param {number} stepL 左侧步数
-         * @param {number} stepL 右侧步数
-         */
-        function _copy (point,stepL,stepR){
-          let res =[point];
-          for(let i=0;i<stepL;i++){
-            res.push(point -360);
-          }
-          for(let i=0;i<stepR;i++){
-            res.push(point+360);
-          }
-          res.sort((a,b)=>Math.abs(a)-Math.abs(b));
-          return res;
-        }
 
     },
   },
   mounted() {
     this.initMap();
-    // this.testControl();
   },
 };
 </script>
