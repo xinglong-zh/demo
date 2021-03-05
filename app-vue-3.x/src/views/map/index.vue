@@ -66,6 +66,9 @@ L.circle.demo = function(opts){
 
 // import Axios from 'axios';
 
+import BinLayer from '@/assets/js/BinLayer'
+import { Meta1 } from '@/assets/js/gl-shaded/Catalog';
+
 export default {
   name: "demoMap",
   data() {
@@ -95,9 +98,16 @@ export default {
 
       // new ContourLayerExt({url:'./contour.json'}).addTo(map);
       // 探索WelGL 差值问题
+      let meta1  = new Meta1('http://10.1.64.146/mdfs/v1.1/','GRAPES_GFS/RAIN24_UNCLIPPED','21030402.027');
+      let meta2 = new Meta1('http://10.1.64.146/mdfs/v1.1/','GRAPES_GFS/RAIN03_UNCLIPPED','21030402.006');
+      let layer = new BinLayer({'color': 'rain',meta:meta1});
+      layer.addTo(map);
+      setTimeout(()=>layer.setMeta(meta2),5000);
 
-
-    },
+      let int16 = new Int16Array(3);
+      int16[1] =3;
+      console.log(int16);
+    }
   },
   mounted() {
     this.initMap();

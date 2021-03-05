@@ -15,5 +15,15 @@ module.exports = {
             }
         }
     },
-    lintOnSave:'error',
+    lintOnSave:false,
+    configureWebpack:{
+        module: {
+            rules: [
+              {
+                test: /\.glsl$/i,
+                loader: 'webpack-glsl-loader',
+              },
+            ],
+          },
+    }
 }
