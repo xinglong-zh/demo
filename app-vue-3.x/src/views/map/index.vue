@@ -82,7 +82,7 @@ export default {
       type: Object,
       default: () => ({
         zoomDelta: 0.5,
-        zoom: 4,
+        zoom: 2,
         attributionControl: false,
         worldCopyJump:false,
       }),
@@ -98,15 +98,19 @@ export default {
 
       // new ContourLayerExt({url:'./contour.json'}).addTo(map);
       // 探索WelGL 差值问题
-      let meta1  = new Meta1('http://10.1.64.146/mdfs/v1.1/','GRAPES_GFS/RAIN24_UNCLIPPED','21030402.027');
-      let meta2 = new Meta1('http://10.1.64.146/mdfs/v1.1/','GRAPES_GFS/RAIN03_UNCLIPPED','21030402.006');
-      let layer = new BinLayer({'color': 'rain',meta:meta1});
+      let meta6  = new Meta1('http://10.1.64.146/mdfs/v1.1/','GRAPES_GFS/RAIN24_UNCLIPPED','21030808.027');
+      let meta2 = new Meta1('http://10.1.64.146/mdfs/v1.1/','GRAPES_GFS/RAIN03_UNCLIPPED','21030808.006');
+      let meta3 = new Meta1('http://10.1.64.146/mdfs/v1.1/','GRAPES_GFS/RAIN03_UNCLIPPED','21030808.012');
+      let meta4 = new Meta1('http://10.1.64.146/mdfs/v1.1/','GRAPES_GFS/RAIN03_UNCLIPPED','21030808.018');
+      let meta5 = new Meta1('http://10.1.64.146/mdfs/v1.1/','GRAPES_GFS/RAIN03_UNCLIPPED','21030808.024');
+      let layer = new BinLayer({'color': 'rain',meta:meta2});
       layer.addTo(map);
-      setTimeout(()=>layer.setMeta(meta2),5000);
-
-      let int16 = new Int16Array(3);
-      int16[1] =3;
-      console.log(int16);
+      setTimeout(()=>layer.setMeta(meta3),1000);
+      setTimeout(()=>layer.setMeta(meta4),1000);
+      setTimeout(()=>layer.setMeta(meta5),1000);
+      setTimeout(()=>layer.setMeta(meta6),1000);
+      setTimeout(()=>layer.setMeta(meta4),4000);
+      
     }
   },
   mounted() {

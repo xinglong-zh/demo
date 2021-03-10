@@ -2,7 +2,7 @@ import { colors } from './colors.js';
 import { Mercator } from "./Mercator";
 import { newWorker } from "./fakeWorker";
 import { worker } from "./Tile.svc";
-import { Catalog, Meta1, Meta3 } from "./Catalog";
+import { Catalog } from "./Catalog";
 import vs from "./shaders/vs.glsl";
 import fs from "./shaders/fsi16hermite.xOy.glsl";
 import * as util from "./util";
@@ -21,9 +21,8 @@ var ShadedLayer = L.Renderer.extend({
         shaded: true,
         filter: 'true',
         className: '',
-        animate:true, // 是否开启动画
-        frame:60, //  deltaTex 计算使用间隔 , 默认为60帧, 1s内执行完成,待测试极限情况
-        
+        animate: true, // 是否开启动画 , 使用setMeta 进行触发 .
+        frame: 24, //  过渡动画帧数
     },
     /**
      * onAdd 时候 , 已经继承了  on('update',_updateaPaths,this);
@@ -36,12 +35,14 @@ var ShadedLayer = L.Renderer.extend({
         this.setMeta(this.options.meta, true);
         //初始化
         // this._updatePaths();
-        this.deltaTex = null;  // 纹理增量数据
-        this.oldMainTex = null; // 上次的纹理数据
-        /**@type {Number[][]} */
+        /**@type {Int16Array} */
         this.oldData = null;
-         /**@type {Int16Array} */
-        this.deltaData = new Int16Array();
+        /**@type {Int16Array} */
+        this.curFrameTime = 0; //已渲染帧数
+        /**
+         * @type {WebGLRenderingContextBase}
+         */
+        this.lastTex = null;
     },
     onRemove: function () {
         L.Renderer.prototype.onRemove.call(this);
@@ -153,7 +154,7 @@ var ShadedLayer = L.Renderer.extend({
         var res = this._getRes() * this.options.ratio;
         if (isNaN(res))
             return;
-        var zoom = res < catalog.maxRes ? catalog.maxZoom : catalog.maxZoom - Math.ceil(Math.log(res / catalog.maxRes) / Math.log(2));
+        zoom = res < catalog.maxRes ? catalog.maxZoom : catalog.maxZoom - Math.ceil(Math.log(res / catalog.maxRes) / Math.log(2));
         if (zoom < 0) zoom = 0;
 
         // web worker 进行处理  , 由onmessage 的程序  this.texSrcLoaded  进行相应
@@ -212,33 +213,19 @@ var ShadedLayer = L.Renderer.extend({
                     );
 
             // 渲染函数
-            const start = Date.now();
-            if(this.options.animate){
-                // options 开启过度动画效果
-                if(this.oldData==null){
+            if (this.options.animate) {
+                // 开启动画之后 , 
+                if (this.oldData == null || this.oldData.length != data.abv.length) {
                     this.oldData = data.abv;
-                }else{
-                    // 判断oldData 是否和现在相等
-                    if(this.oldData.join()!==data.abv){
-                        //  开始创建纹理
-                        let n = data.abv.length;
-                        this.deltaData = new Uint16Array(n);
-                        for (let i=0;i<n;i++){
-                                this.deltaData[i] = (data.abv[i] - this.oldData[i])/this.options.frame;
-                        }
-                        // 创建纹理
-                        /**@type {WebGLRenderingContextBase} */
-                        let gl = this.gl;
-                        this.deltaTex = util.createTexture(gl,gl.NEAREST,this.deltaData,data.size.x,data.size.y)
-                        util.bindTexture(gl,this.deltaTex,2); // 绑定到纹理2
-                    }
-
+                    this.render(data.abv, data.size, data.scale, data.latLngBounds, data.res, xOyBounds, ppd, null);
+                } else {
+                    // 维度相同 , 可以操作
+                    this.render(data.abv, data.size, data.scale, data.latLngBounds, data.res, xOyBounds, ppd, this.oldData);
                 }
+            } else {
+                // 未开启动画
+                this.render(data.abv, data.size, data.scale, data.latLngBounds, data.res, xOyBounds, ppd, null);
             }
-            this.render(data.abv, data.size, data.scale, data.latLngBounds, data.res, xOyBounds, ppd);
-            console.log('渲染时间',Date.now()-start);
-            this.fire("updated");
-
         }, this)
     },
     /**
@@ -335,8 +322,9 @@ var ShadedLayer = L.Renderer.extend({
      * @param {*} res tex分辨率 degree per pixel
      * @param {*}pxBounds 视窗范围
      * @param {*}ppd 视窗分辨率（经度） pixel per degree
+     * @param {prevArrayBufferView} prevAbv  上次的纹理数据
      */
-    render: function (abv, texSize, scale, latLngBounds, res, pxBounds, ppd) {
+    render: function (abv, texSize, scale, latLngBounds, res, pxBounds, ppd, prevAbv){
         /**@type {WebGLRenderingContextBase} */
         var gl = this.gl, prgObj = this.prgObj;  // prgObj  ==> program Object  vs+fs
         var epsg = this._map.options.crs.code.split(":")[1];  // crs ==> EPSG:3857 
@@ -355,39 +343,54 @@ var ShadedLayer = L.Renderer.extend({
         gl.clear(gl.COLOR_BUFFER_BIT);
         L.Renderer.prototype._update.call(this);
 
-        gl.deleteTexture(this.mainTex);
-        var data = abv instanceof Int16Array ? new Uint16Array(abv.buffer) : new Uint8Array(abv.buffer);
-        /** FIXME: 这里计算 delta 矩阵 ,
-         * 上次渲染的 data 保留 , 和这次渲染的data 计算矩阵差  ,  然后算delta ,  step  ,  此函数已经包含在requestAnimFrame 中
-         * 
-         */
-        this.mainTex = util.createTexture(gl, gl.NEAREST, data, texSize.x, texSize.y);  // 创建主纹理
+        gl.deleteTexture(this.mainTex); // 去掉主纹理
+        gl.deleteTexture(this.oldTex); // 去掉上次纹理
+        var data = abv instanceof Int16Array ? new Uint16Array(abv.buffer) : new Uint8Array(abv.buffer); // 这里是新数据， 渐变效果使用旧数据 + delta 纹理
+        this.mainTex = util.createTexture(gl, gl.NEAREST, data, texSize.x, texSize.y);  // 创建主纹理 , 
+        var lastData = prevAbv != null ? prevAbv instanceof Int16Array ? new Uint16Array(prevAbv.buffer) : new Uint8Array(prevAbv.buffer) : null;
+        if (lastData != null) {
+            this.lastTex = util.createTexture(gl, gl.NEAREST, lastData, texSize.x, texSize.y);
+            util.bindTexture(gl, this.lastTex, 2);
+            gl.uniform1i(prgObj.uLastTex, 2);  // 使用纹理2 
+        }
         util.bindTexture(gl, this.mainTex, 0);   // mainTex 纹理 0 , 计算坐标使用
         // uniformXXX 设置全局变量的值
         gl.uniform1i(prgObj.sLngLatTex, 0); // mainTex 复制给经纬度纹理
-
         gl.uniform4f(prgObj.uLngLatBounds, latLngBounds.getWest(), latLngBounds.getSouth(), latLngBounds.getEast(), latLngBounds.getNorth());
         gl.uniform1f(prgObj.uRes, res);
         gl.uniform2f(prgObj.uScale, scale.x, scale.y);
         gl.uniform1i(prgObj.uEPSG, epsg);
         gl.uniform1f(prgObj.uPpd, ppd);
         gl.uniform4f(prgObj.uBounds, pxBounds.min.x, pxBounds.min.y, pxBounds.max.x, pxBounds.max.y);
-         // uniformXXX 设置全局变量的值
-
+        // uniformXXX 设置全局变量的值
         var pltTex = this.pltTex, color = this._color;
         util.bindTexture(gl, pltTex, 1); // pltTex 纹理1 取色用
         gl.uniform1i(prgObj.sPltTex, 1);
-
-
         gl.uniform3f(prgObj.uPltMinMax, color.min, color.max, color.max - color.min);
-
-        // 绑定过度纹理
-        if(this.options.frame){
-
-        }
+        let i =0;
+        let self =this;
         
+        if(this.options.animate&&this.oldData!=null){
+            draw();
+            this.oldData = abv;
+        }else{
+            gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
+        }
 
-        gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
+        /**
+         * 寻找 drawArrays 最小单元
+         */
+        function draw(){
+            if(i++<self.options.frame){
+                // texRatio  vec4  [x,x,x,x]
+                let texRatio = new Array(4).fill(i/self.options.frame);
+                gl.uniform4f(prgObj.uMainTexRatio,...texRatio);
+                gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
+                L.Util.requestAnimFrame(draw);
+            }else{
+                return;
+            }
+        }
     },
     /**
      *
@@ -462,10 +465,10 @@ var ShadedLayer = L.Renderer.extend({
             return { data: grid, bounds: L.latLngBounds(sw, ne), res: this.data.res * skip };
         }
 
-        for (var row = leftBottom.y; row <= rightTop.y; row += skip) {
-            for (var col = leftBottom.x; col <= rightTop.x; col += skip) {
-                var cell = L.point(col, row);
-                var val = this._getCell(cell);
+        for (let row = leftBottom.y; row <= rightTop.y; row += skip) {
+            for (let col = leftBottom.x; col <= rightTop.x; col += skip) {
+                let cell = L.point(col, row);
+                let val = this._getCell(cell);
                 if (this.filter(val)) {
                     var latlng = L.latLng(row * this.data.res + this.data.latLngBounds.getSouth(), col * this.data.res + this.data.latLngBounds.getWest());
                     geojson.features.push({

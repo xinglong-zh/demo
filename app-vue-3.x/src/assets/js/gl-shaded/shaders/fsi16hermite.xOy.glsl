@@ -10,7 +10,8 @@ uniform vec2 uScale;
 uniform sampler2D sPltTex;//调色板
 uniform vec3 uPltMinMax; //x min ,y max, z (max-min)
 
-uniform sampler2D deltaTex; //todo 数据增量 , 过渡效果使用  
+uniform sampler2D uLastTex; // 上次的纹理使用
+uniform vec4 uMainTexRatio ; // 主纹理的使用比例  [0.0,0.0,0.0,0.0] -[1.0,1.0,1.0,1.0] 向量和向量的点击  ,上次纹理  1- ratio
 
 uniform int uEPSG;
 uniform float uPpd; //视窗分辨率（经度） pixel per degree
@@ -41,7 +42,7 @@ float getVal(vec2 p){
         return 32767.;
     // vec4 rawVal = texture2D(sLngLatTex,p*uScale);  // 原始代码
     // 每次取值的时候加上delta ,最后一次不加 todo
-    vec4 rawVal = texture2D(sLngLatTex,p*uScale)+texture2D(deltaTex,p*uScale);
+    vec4 rawVal = uMainTexRatio*texture2D(sLngLatTex,p*uScale)+(vec4(1.0,1.0,1.0,1.0)-uMainTexRatio)*texture2D(uLastTex,p*uScale);
     return b2f(rawVal*15.);
 }
 bool where(float val);

@@ -17,7 +17,11 @@ export default {
     return {};
   },
   mounted() {
-    this.drawchart();
+    for(let i=0;i<4;i++){
+      let n = 2*i
+      setTimeout(()=>{console.log(n)},1000*i);
+    }
+
   },
   methods: {
     drawchart(id = "mychart") {
