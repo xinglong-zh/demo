@@ -212,7 +212,7 @@ var ShadedLayer = L.Renderer.extend({
                         Mercator.latlng2point(this._latLngBounds.getNorthEast(), ppd)
                     );
 
-            // 渲染函数
+            //  动画开关
             if (this.options.animate) {
                 // 开启动画之后 , 
                 if (this.oldData == null || this.oldData.length != data.abv.length) {
@@ -374,6 +374,7 @@ var ShadedLayer = L.Renderer.extend({
             draw();
             this.oldData = abv;
         }else{
+            gl.uniform4f(prgObj.uMainTexRatio,1,1,1,1);
             gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
         }
 

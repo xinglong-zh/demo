@@ -49,3 +49,5 @@ vector Layers  transtorm latlng to pixels  and  drew the geometries using SVG or
 geojson的数据是在 -180 , 180 之间的
 需要在移动的时候 ,进行clone() , 然后经纬加减360(环球)  , 参考gridLayer  , 由中心开始加载 ,   下一阵开始绘制, 优化性能.
 是否需要扩展一个layers , 可以实现此功能 , 然后 同时继承 geojson 和 canvasLayer
+
+### leaflet 可以使用 gpu.js 进行加速绘制  .  TODO:GPU.js + web worker

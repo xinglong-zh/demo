@@ -7,6 +7,7 @@
 <script>
 import * as L from "leaflet";
 import * as topojson from "topojson";
+// import '@/assets/js/bundle';
 //extend Leaflet to create a GeoJSON layer from a TopoJSON file
 L.TopoJSON = L.GeoJSON.extend({
   addData: function (data) {
@@ -103,7 +104,7 @@ export default {
       let meta3 = new Meta1('http://10.1.64.146/mdfs/v1.1/','GRAPES_GFS/RAIN03_UNCLIPPED','21030808.012');
       let meta4 = new Meta1('http://10.1.64.146/mdfs/v1.1/','GRAPES_GFS/RAIN03_UNCLIPPED','21030808.018');
       let meta5 = new Meta1('http://10.1.64.146/mdfs/v1.1/','GRAPES_GFS/RAIN03_UNCLIPPED','21030808.024');
-      let layer = new BinLayer({'color': 'rain',meta:meta2});
+      let layer = new BinLayer({'color': 'rain',meta:meta2,aminate:true});
       layer.addTo(map);
       setTimeout(()=>layer.setMeta(meta3),1000);
       setTimeout(()=>layer.setMeta(meta4),1000);
