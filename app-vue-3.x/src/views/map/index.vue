@@ -61,7 +61,7 @@ L.circle.demo = function(opts){
 
 // import {canvasLayer} from '@/assets/js/contour/L.CanvasLayer'
 
-// import ContourLayerExt from '@/assets/js/contour/ContourLayerExt'  // 公司的js代码
+// import ContourLayerExt from '@/assets/js/contour/ContourLayerExt' 
 
 
 

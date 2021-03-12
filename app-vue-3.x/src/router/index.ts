@@ -26,10 +26,10 @@ const routes = [
     component:()=>import('@/views/demo/popup.vue')
   },
   {
-    path:'/webgl',
-    name:'webgl',
-    component:()=>import('@/views/canvas/index.vue')
-  }
+    path:'/promise',
+    name:'promise',
+    component:()=>import('@/views/demo/promise.vue')
+  },
 ]
 
 const router = createRouter({
