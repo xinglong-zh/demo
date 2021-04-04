@@ -16,29 +16,29 @@ const routes = [
   //   component:()=> import('../views/Type')
   // },
   {
-    path:'/bilibili',
-    name:'bilibili',
-    component:()=> import('@/views/bilibili/index'),
+    path: '/bilibili',
+    name: 'bilibili',
+    component: () => import('@/views/bilibili/index'),
   },
   {
-    path:'/map',
-    name:'map',
-    component:() => import('@/views/map/index.vue')
+    path: '/map',
+    name: 'map',
+    component: () => import('@/views/map/index.vue')
   },
   {
-    path:'/demo',
-    name:'demo',
-    component:()=>import('@/views/demo/index')
+    path: '/demo',
+    name: 'demo',
+    component: () => import('@/views/demo/index')
   },
   {
-    path:'/chart',
-    name:'chart',
-    component:()=>import('@/views/demo/chart.vue')
+    path: '/chart',
+    name: 'chart',
+    component: () => import('@/views/demo/chart.vue')
   },
   {
-    path:'/pop',
-    name:'pop',
-    component:()=>import('@/views/demo/popup.vue')
+    path: '/pop',
+    name: 'pop',
+    component: () => import('@/views/demo/popup.vue')
   }
 ]
 
