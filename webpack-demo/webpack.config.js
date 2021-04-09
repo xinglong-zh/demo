@@ -1,6 +1,7 @@
 const {resolve} = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin'); // 自动生成index.html
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;  /// boundle 分析工具
+const CompressionPlugin = require("compression-webpack-plugin");  // 压缩文件 .gz
 module.exports ={
     // entry:'./src/index.js',
     entry:{
@@ -17,6 +18,9 @@ module.exports ={
             title:"管理输出"
         }),
         new BundleAnalyzerPlugin(),
+        new CompressionPlugin({
+            test:/\.js(\?.*)?$/i
+        }),
     ],
     output:{
         // filename:'[name].boundle.js',
