@@ -13,7 +13,8 @@ module.exports = merge(common,{
     devtool:'source-map', // 生产环境启用 source-map
     output:{
         // filename:'[name].boundle.js',
-        filename:'[name].[contenthash].js', // 使用hash缓存
+        // filename:'[name].[contenthash].js', // 使用hash缓存
+        filename:'[name].js', // 使用hash缓存
         path:resolve(__dirname,'dist'),
         clean:true,  // 打包后清理dist,
         // https://webpack.docschina.org/guides/author-libraries/  打包类库配置
@@ -38,4 +39,5 @@ module.exports = merge(common,{
             chunks:'all',
         }
     },
+    
 })
