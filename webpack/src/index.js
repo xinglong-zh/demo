@@ -4,10 +4,10 @@ import {
     propsModule,
     styleModule,
     eventListenersModule,
-    // h,
+    h,
 } from "snabbdom";
 
-import { h } from './snabbdom/h'
+import { h as H } from './snabbdom/h'
 
 
 
@@ -20,6 +20,7 @@ const patch = init([
 ]);
 
 const container = document.getElementById("container");
+const button = document.getElementById('button');
 
 // const vnode = h("div#container.two.classes", {
 //     on: {
@@ -33,17 +34,31 @@ const container = document.getElementById("container");
 //     h("a", { props: { href: "/foo" } }, "I'll take you places!"),
 // ]);
 
-// const vnode = h('ul', { key: 1 }, [
-//     h('li', { key: 'A' }, 'A'),
-//     h('li', { key: 'B' }, 'B'),
-// ])
+const vnode = h('ul', { key: 1 }, [
+    h('li', { key: 'A' }, 'A'),
+    h('li', { key: 'B' }, 'B'),
+])
 
 // const vnode = h('div', { key: 1 }, 'hello');
 
-const vnode = h('div', { key: 1 }, h('span', { key: 2 }, 'spans'));
+// const vnode = h('div', { key: 1 }, h('span', { key: 2 }, 'spans'));
+// const vnode3 = H('div', { key: 'key' }, [H('section', {}, 'hello')]);
+
+const vnode3 = H('ul', { key: 1 }, [
+    H('li', { key: 'A' }, 'hello'),
+    H('li', { key: 'B' }, 'world'),
+])
+
 // Patch into empty DOM element – this modifies the DOM as a side effect
 patch(container, vnode);
-// console.log(vnode);
+patch(button, h('span', {
+    on: {
+        click: function () {
+            patch(vnode, vnode3);
+        }
+    }
+}, 'click'))
+// patch(vnode, vnode2);
 
 // const newVnode = h(
 //     "div#container.two.classes",
