@@ -15,15 +15,15 @@ export function patch(oldVnode, vnode) {
     if (sameVnode(oldVnode, vnode)) {
         patchVnode(oldVnode, vnode);
     } else {
+        /**@type {Node} */
         let elm = oldVnode.elm;
         /**@type {Node} */
         parent = parentNode(oldVnode.elm);
         // vnode elm 需要创建
 
         createElement(vnode);
-        console.log(vnode);
 
-        insertBefore(parent, vnode.elm, elm);
+        insertBefore(parent, vnode.elm, elm.nextSibling);
         // 删除原始引用
         parent.removeChild(elm);
     }
