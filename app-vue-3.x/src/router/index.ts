@@ -21,12 +21,6 @@ const routes = [
     component: () => import('@/views/demo/chart.vue')
   },
   {
-<<<<<<< HEAD
-    path: '/pop',
-    name: 'pop',
-    component: () => import('@/views/demo/popup.vue')
-  }
-=======
     path:'/pop',
     name:'pop',
     component:()=>import('@/views/demo/popup.vue')
@@ -36,7 +30,6 @@ const routes = [
     name:'promise',
     component:()=>import('@/views/demo/promise.vue')
   },
->>>>>>> 59699f1b6251f66cf1ba52607ed60eaaf880b4c7
 ]
 
 const router = createRouter({

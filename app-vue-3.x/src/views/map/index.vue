@@ -59,13 +59,51 @@ L.circle.demo = function(opts){
   return new L.Circle.Demo(opts);
 }
 
+// 自定义canvas
+
+L.CustomLayer = (L.Layer ? L.Layer:L.Class).extend({
+  options:{
+    pane:'markerPane'
+  },
+  onAdd:function(map){
+    let pane = map.getPane(this.options.pane);
+    this._container = L.DomUtil.create('canvas');
+    L.DomUtil.addClass(this._container,'marker-canvas')
+    const {x,y} = map.getSize();
+    this._container.width = x;
+    this._container.height = y;
+    pane.appendChild(this._container);    // bounds.min 左上角
+
+  },
+  addMarkers:function(markers){
+    console.log(markers);
+  },
+  addMarker:function(marker){
+    let latlng = marker.getLatLng();
+    
+  },
+  onRemove:function(map){
+      L.DomUtil.remove(this._container);
+      map.off('zoomend viewreset',this._update,this);
+  },
+  _update:function(){
+
+    let bounds = this._bounds;
+    L.Util.setOptions(this._container,bounds.min);
+  }
+})
+
+L.customLayer = function(opts){
+  return new L.CustomLayer(opts);
+}
+
 // import {canvasLayer} from '@/assets/js/contour/L.CanvasLayer'
 
 // import ContourLayerExt from '@/assets/js/contour/ContourLayerExt' 
 
 
 
-// import Axios from 'axios';
+import Axios from 'axios';
 
 import BinLayer from '@/assets/js/BinLayer'
 import { Meta1 } from '@/assets/js/gl-shaded/Catalog';
@@ -91,27 +129,15 @@ export default {
   },
   methods: {
     async initMap() {
-      let map = L.map("map",{worldCopyJump:false}).setView([51.505, -0.09], 3);
-      this.map = map;
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(map)
+      let map = L.map("map",{worldCopyJump:false,preferCanvas:true,renderer:L.canvas({tolerance:10})},).setView([100, -0.09], 3);
 
-      L.gridLayer.debugCoords().addTo(map);
-
-      // new ContourLayerExt({url:'./contour.json'}).addTo(map);
-      // 探索WelGL 差值问题
-      let meta6  = new Meta1('http://10.1.64.146/mdfs/v1.1/','GRAPES_GFS/RAIN24_UNCLIPPED','21030808.027');
-      let meta2 = new Meta1('http://10.1.64.146/mdfs/v1.1/','GRAPES_GFS/RAIN03_UNCLIPPED','21030808.006');
-      let meta3 = new Meta1('http://10.1.64.146/mdfs/v1.1/','GRAPES_GFS/RAIN03_UNCLIPPED','21030808.012');
-      let meta4 = new Meta1('http://10.1.64.146/mdfs/v1.1/','GRAPES_GFS/RAIN03_UNCLIPPED','21030808.018');
-      let meta5 = new Meta1('http://10.1.64.146/mdfs/v1.1/','GRAPES_GFS/RAIN03_UNCLIPPED','21030808.024');
-      let layer = new BinLayer({'color': 'rain',meta:meta2,aminate:true});
-      layer.addTo(map);
-      setTimeout(()=>layer.setMeta(meta3),1000);
-      setTimeout(()=>layer.setMeta(meta4),1000);
-      setTimeout(()=>layer.setMeta(meta5),1000);
-      setTimeout(()=>layer.setMeta(meta6),1000);
-      setTimeout(()=>layer.setMeta(meta4),4000);
+      // let res = await Axios.get('./response.json');
+      console.log(map.getSize());
+      let c =  L.customLayer({});
+      map.addLayer(c);
       
+      
+
     }
   },
   mounted() {
@@ -153,6 +179,10 @@ export default {
 .crsMarker {
 	border-top: 2px green solid;
 	border-left: 2px green solid;
+}
+.marker-canvas {
+  width: 100%;
+  height: 100%;
 }
 </style>
 
