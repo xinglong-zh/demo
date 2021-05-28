@@ -6,6 +6,7 @@
 
 <script>
 import * as L from "leaflet";
+import domtoimage from "dom-to-image";
 // import * as topojson from "topojson";
 // import '@/assets/js/bundle';
 //extend Leaflet to create a GeoJSON layer from a TopoJSON file
@@ -104,10 +105,40 @@ export default {
         renderer: L.canvas({ tolerance: 10 }),
       }).setView([59, 30], 10);
 
-      let marker = L.marker(map.getCenter(), { icon: DefaultIcon });
+      // var ciLayer = L.canvasIconLayer({}).addTo(map);
 
-      var ciLayer = L.canvasIconLayer({}).addTo(map);
-      ciLayer.addMarker(marker);
+      const html = `
+      <div class="_airIcon _air _air_normal" style="width:90px;height:90px;">
+                <span>1</span>
+                <span></span>
+                <span></span>
+                <span>-28</span>
+                <span><i class="barb fy" style="transform: translate(50%,-31px) rotate(300deg);">6</i><i class="cloud">0</i></span>
+                <span>1043</span>
+                <span>-48</span>
+                <span></span>
+                <span>908</span>
+              </div>
+              `;
+
+        
+
+        // console.log(L.icon().createIcon(dom));
+        let icon = L.icon(
+          {iconUrl: dataUrl ,
+          shadowUrl: iconShadow,
+          iconAnchor: [12, 41], // 配置icon的偏移   png:21*41
+          iconSize: [90,90]});
+        
+
+
+      let marker = L.marker(map.getCenter(), { icon: DefaultIcon });
+      let feature = L.featureGroup().addTo(map);
+      feature.addLayer(marker);
+      
+
+      
+      // ciLayer.addMarker(marker);
     },
   },
   mounted() {
