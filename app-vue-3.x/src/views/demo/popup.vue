@@ -1,10 +1,13 @@
 <template>
   <div class="demo">6</div>
-  <canvas id="canvas" > canvas 内容 </canvas>
+  <canvas id="canvas"> canvas 内容 </canvas>
+  <canvas id="canvas2" height="300" width="300"> canvas 内容内容</canvas>
 </template>
 
 <script>
 import { GPU } from "gpu.js";
+import * as GIF from "./gif.js";
+import "./gif.worker.js";
 export default {
   name: "demo",
   data() {
@@ -63,6 +66,79 @@ export default {
 
       return canvas;
     },
+    tick() {
+      // let gif = new GIF({
+      //   workers: 2,
+      //   quality: 10,
+      // });
+
+      // 在canvas 上循环画点
+      let canvas = document.querySelector('#canvas2');
+      let ctx = canvas.getContext("2d");
+      // ctx.save();
+      ctx.fillStyle ="red"
+      ctx.clearRect(0, 0, 300, 300);
+      // ctx.fillStyle = "white 18px";
+      // ctx.fillRect(0,0,100,100)
+      let random = (Math.random() * 300).toFixed(0);
+      // console.log(random);
+      ctx.fillStyle = "black 18px";
+      ctx.fillText("1", random, random);
+      requestAnimationFrame(this.tick);
+
+
+      // gif.addFrame(canvas,{delay:200,copy:true});
+      // gif.render();
+      // gif.on("finished", function (blob) {
+        // window.open(URL.createObjectURL(blob));
+        // 后台下载
+        // let a = document.createElement("a");
+        // a.download = "下载";
+        // a.href = URL.createObjectURL(blob);
+        // document.body.appendChild(a);
+        // a.click();
+        // a.remove();
+      // });
+    },
+    generateGIF() {
+      let gif = new GIF({
+        workers: 2,
+        quality: 10,
+      });
+
+      let canvas = document.querySelector("#canvas2");
+      gif.addFrame(canvas);
+      for(let i=0;i<4;i++){
+         requestAnimationFrame(()=>{
+           gif.addFrame(canvas,{height:300,width:300});
+         })
+      }
+      gif.render();
+
+      gif.on("finished", function (blob) {
+        // window.open(URL.createObjectURL(blob));
+        // 后台下载
+        // let a = document.createElement("a");
+        // a.download = "下载";
+        // a.href = URL.createObjectURL(blob);
+        // document.body.appendChild(a);
+        // a.click();
+        // a.remove();
+      });
+    },
+    taskDemo(){
+      // 测试异步
+      setTimeout(() => {
+         console.log('time out 100');
+      }, 100);
+      let promise = new Promise((resolve,reject)=>{
+        setTimeout(()=>{
+          console.log('resolve 100');
+          resolve('promise 100');
+        })
+      })
+      promise.then(res=>{console.log(res)});
+    }
   },
   created() {},
   mounted() {
@@ -77,11 +153,15 @@ export default {
     // console.log(c);
 
     // document.getElementById('demo').parentNode.insertBefore(this.getCanvas(),null);
-    let canvas = document.getElementById("canvas");
-    canvas.height =90
-    canvas.width =90
-    this.getCanvas({}, canvas, true);
-    document.body.insertBefore(canvas, null);
+    // let canvas = document.getElementById("canvas");
+    // canvas.height =90
+    // canvas.width =90
+    // this.getCanvas({}, canvas, true);
+    // document.body.insertBefore(canvas, null);
+
+    this.tick();
+    this.generateGIF();
+    this.taskDemo();
   },
 };
 </script>
@@ -99,6 +179,10 @@ export default {
 }
 
 #canvas {
+  border: 1px solid red;
+  font-family: "wind";
+}
+#canvas2 {
   border: 1px solid red;
   font-family: "wind";
 }
